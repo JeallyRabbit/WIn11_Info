@@ -1,0 +1,30 @@
+﻿<Window x:Class="WIn11_Info.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WIn11_Info"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="400" Width="518"
+        ResizeMode="NoResize"
+        >
+    <Grid Margin="0,0,0,0">
+
+        <Button x:Name="btnShowSN" Content="ShowSN" Margin="10,20,388,0" Height="40" VerticalAlignment="Top" Click="btnShowSN_Click" ClipToBounds="True"/>
+        <Button x:Name="btnShowIP" Content="Show IP" Margin="135,20,263,0" Height="40" VerticalAlignment="Top" Click="btnShowIP_Click" ClipToBounds="True"/>
+        <Button x:Name="btnShowCPU" Margin="260,20,138,0" Height="40" VerticalAlignment="Top" Click="btnShowCPU_Click" ClipToBounds="True">
+            <TextBlock x:Name="txtBlockCpu" Text="Show CPU" TextWrapping="Wrap" TextAlignment="Center"/>
+        </Button>
+        <Button x:Name="btnShowHostName" Content="Show HostName" Margin="385,20,13,0" Height="40" VerticalAlignment="Top" Click="btnShowHostName_Click" ClipToBounds="True"/>
+        <Button x:Name="btnDhcpRecord" Content="Make DHCP Record" Margin="10,70,388,0" Height="40" VerticalAlignment="Top" Click="btnDhcpRecord_Click" ClipToBounds="True" />
+        <Button x:Name="btnShowLAN" Content="Show MAC LAN"  Margin="135,70,263,0" Height="40" VerticalAlignment="Top" Click="btnShowLAN_Click" ClipToBounds="True"/>
+        <Button x:Name="btnShowWLAN" Content="Show MAC WLAN" Margin="260,70,138,0" Height="40" VerticalAlignment="Top" Click="btnShowWLAN_Click" ClipToBounds="True"/>
+        <Button x:Name="btnSetHostName" Content="Set HostName"  Margin="385,70,13,0" Height="40" VerticalAlignment="Top" ClipToBounds="True"/>
+        <TextBox x:Name="txtBoxHostName" Margin="385,115,13,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Height="18" ClipToBounds="True"/>
+        <TextBox x:Name="txtBoxDhcpRecord" Margin="10,115,388,0" TextWrapping="Wrap" Text="192.168." ClipToBounds="True" SnapsToDevicePixels="True" Height="18" VerticalAlignment="Top"/>
+        <Label x:Name="lblDhcpRecord1" Content="Label" HorizontalAlignment="Left" Margin="10,138,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+        <Label x:Name="lblDhcpRecord2" Content="Label" HorizontalAlignment="Left" Margin="10,168,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+
+
+    </Grid>
+</Window>
