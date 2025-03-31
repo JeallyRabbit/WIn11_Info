@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 // Allows to use Win32 Classes
 using System.Management;
+
 using System.Net.NetworkInformation;
 using System.Windows;
-
+using System.Diagnostics;
 
 
 namespace WIn11_Info
@@ -108,5 +109,72 @@ namespace WIn11_Info
             }
             return "0";
         }
+
+        public static bool setLocalHostName(string newName)
+        {
+            string domainName = "";
+            string domainUser = "";
+            string domainPassword = "";
+            domainCredentials credentialsForm=new domainCredentials();
+            credentialsForm.ShowDialog();
+
+            if (credentialsForm.IsActive == false)
+            {
+                if (credentialsForm.isPassing == false) { return false; }
+                domainUser = credentialsForm.txtBoxUserName.Text.ToString();
+                domainPassword = credentialsForm.passwordBoxCredentials.Password.ToString();
+                domainName = credentialsForm.txtBoxDomainName.Text.ToString();
+            }
+
+
+
+            string script = $@"
+            $newName = '{newName}'
+            $domain = '{domainName}'
+            $username = '{domainUser}'
+            $password = ConvertTo-SecureString '{domainPassword}' -AsPlainText -Force
+            $credential = New-Object System.Management.Automation.PSCredential ($username, $password);
+            
+            Rename-Computer -NewName $newName -DomainCredential $credential -Force";
+
+
+            ProcessStartInfo processInfo = new ProcessStartInfo
+            {
+                FileName = "powershell.exe",
+                Arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{script}\"",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+
+            };
+            using (Process process = new Process { StartInfo = processInfo })
+            {
+
+                process.Start();
+
+                // Read the output (optional)
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+
+                process.WaitForExit();
+
+                
+                // print the status of command
+                if (process.ExitCode != 0) { MessageBox.Show("Exit code = " + process.ExitCode); }
+                else
+                {
+                    MessageBoxResult dialogResult = MessageBox.Show("Reboot is required, reboot now ?", "Reboot", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (dialogResult == MessageBoxResult.Yes)
+                    {
+                        Process.Start("ShutDown", "/r");
+                    }
+                }
+                
+
+            }
+            return true;
+        }
+
     }
 }

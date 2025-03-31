@@ -88,5 +88,18 @@ namespace WIn11_Info
             lblDhcpRecord2.Content = "host " + System.Net.Dns.GetHostName().ToString() + "__LAN { hardware ethernet " +
                 btnShowWLAN.Content + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
         }
+
+        private void btnSetHostName_Click(object sender, RoutedEventArgs e)
+        {
+            Tools.setLocalHostName(txtBoxHostName.Text);
+        }
+
+        private void txtBoxHostName_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if(txtBoxHostName.Text=="HostName")
+            {
+                txtBoxHostName.Text=String.Empty;
+            }
+        }
     }
 }
