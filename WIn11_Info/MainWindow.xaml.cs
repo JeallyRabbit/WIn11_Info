@@ -40,7 +40,6 @@ namespace WIn11_Info
         {
             String cpu=Tools.getCPU();
             txtBlockCpu.Text = cpu;
-            //btnShowCPU.Content = Tools.getCPU();
         }
 
         private void btnShowHostName_Click(object sender, RoutedEventArgs e)
@@ -50,15 +49,23 @@ namespace WIn11_Info
 
         private void btnShowLAN_Click(object sender, RoutedEventArgs e)
         {
-            String lan = Tools.GetLocalMac_Lan();
-            if(lan!="")
+            try
             {
-                btnShowLAN.Content = lan;
+                String lan = Tools.GetLocalMac_Lan();
+                if (lan != "")
+                {
+                    btnShowLAN.Content = lan;
+                }
+                else
+                {
+                    MessageBox.Show("Error reading MAC address");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Error reading MAC address");
+                MessageBox.Show(ex.Message);
             }
+            
         }
 
         private void btnShowWLAN_Click(object sender, RoutedEventArgs e)
@@ -99,6 +106,21 @@ namespace WIn11_Info
             if(txtBoxHostName.Text=="HostName")
             {
                 txtBoxHostName.Text=String.Empty;
+            }
+        }
+
+        /*
+        private void txtBoxHostNameKeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
+        */
+
+        private void txtBoxHostNameKey_Down(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                btnSetHostName_Click(sender,e);
             }
         }
     }

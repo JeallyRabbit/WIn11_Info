@@ -134,7 +134,7 @@ namespace WIn11_Info
             $username = '{domainUser}'
             $password = ConvertTo-SecureString '{domainPassword}' -AsPlainText -Force
             $credential = New-Object System.Management.Automation.PSCredential ($username, $password);
-            
+            $ErrorActionPreference = 'Stop';
             Rename-Computer -NewName $newName -DomainCredential $credential -Force";
 
 
@@ -161,7 +161,20 @@ namespace WIn11_Info
 
                 
                 // print the status of command
-                if (process.ExitCode != 0) { MessageBox.Show("Exit code = " + process.ExitCode); }
+                if (process.ExitCode != 0) {
+                    MessageBox.Show("Exit code = " + process.ExitCode + "\n" +
+                        "error " + error+"\n"+"Output "+output);
+
+                    if (error.Contains("Access is denied"))
+                        MessageBox.Show("❌ Wrong credentials or insufficient privileges.");
+                    else if (error.Contains("domain either does not exist"))
+                        MessageBox.Show("❌ Bad domain name or no domain controller connection.");
+                    else if (error.Contains("RPC server is unavailable"))
+                        MessageBox.Show("❌ Network or firewall issue reaching domain controller.");
+                    else
+                        MessageBox.Show("❌ Unknown error: " + error);
+
+                }
                 else
                 {
                     MessageBoxResult dialogResult = MessageBox.Show("Reboot is required, reboot now ?", "Reboot", MessageBoxButton.YesNo, MessageBoxImage.Question);
