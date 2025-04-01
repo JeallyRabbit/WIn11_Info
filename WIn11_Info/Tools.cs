@@ -12,6 +12,7 @@ using System.Management;
 using System.Net.NetworkInformation;
 using System.Windows;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 
 namespace WIn11_Info
@@ -120,7 +121,7 @@ namespace WIn11_Info
 
             if (credentialsForm.IsActive == false)
             {
-                if (credentialsForm.isPassing == false) { return false; }
+                if (credentialsForm.credentialsSuccess == false) { return false; }
                 domainUser = credentialsForm.txtBoxUserName.Text.ToString();
                 domainPassword = credentialsForm.passwordBoxCredentials.Password.ToString();
                 domainName = credentialsForm.txtBoxDomainName.Text.ToString();
@@ -165,15 +166,6 @@ namespace WIn11_Info
                     MessageBox.Show("Exit code = " + process.ExitCode + "\n" +
                         "error " + error+"\n"+"Output "+output);
 
-                    if (error.Contains("Access is denied"))
-                        MessageBox.Show("❌ Wrong credentials or insufficient privileges.");
-                    else if (error.Contains("domain either does not exist"))
-                        MessageBox.Show("❌ Bad domain name or no domain controller connection.");
-                    else if (error.Contains("RPC server is unavailable"))
-                        MessageBox.Show("❌ Network or firewall issue reaching domain controller.");
-                    else
-                        MessageBox.Show("❌ Unknown error: " + error);
-
                 }
                 else
                 {
@@ -187,6 +179,44 @@ namespace WIn11_Info
 
             }
             return true;
+        }
+
+        public static int ValidateNetbiosName(string name)
+        {
+            // Rule 1: Not null or empty
+            if (string.IsNullOrWhiteSpace(name))
+            { 
+                return 1;
+            }
+            // Rule 2: Max 15 characters
+            if (name.Length > 15)
+                return 2;
+
+            // Rule 3: Only A-Z, a-z, 0-9, and hyphen
+            if (!Regex.IsMatch(name, @"^[A-Za-z0-9\-]+$"))
+                return 3;
+
+            // Rule 4: Cannot start or end with hyphen
+            if (name.StartsWith("-") || name.EndsWith("-"))
+                return 4;
+
+            // Rule 5: Cannot be all digits
+            if (Regex.IsMatch(name, @"^\d+$"))
+                return 5;
+
+            // Rule 6: Reserved names
+            string[] reserved = new[]
+            {
+            "CON", "PRN", "AUX", "NUL",
+            "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+            "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
+            };
+
+            if (reserved.Contains(name.ToUpper()))
+                return 6;
+
+            // Passed all checks
+            return 0;
         }
 
     }

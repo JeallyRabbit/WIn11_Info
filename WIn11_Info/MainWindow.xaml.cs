@@ -123,5 +123,70 @@ namespace WIn11_Info
                 btnSetHostName_Click(sender,e);
             }
         }
+
+        private void txtBoxHostName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            
+            int validate=Tools.ValidateNetbiosName(txtBoxHostName.Text);
+            btnSetHostName.IsEnabled = false;
+            if(validate == 0)
+            {
+                btnSetHostName.IsEnabled = true;
+                if(ErrorPopup!=null)
+                {
+                    ErrorPopup.IsOpen = false;
+                }
+            }
+            else if(validate == 1)
+            {
+                if(PopupText!=null && ErrorPopup!=null)
+                {
+                    PopupText.Text = "HostName can't be empty.";
+                    ErrorPopup.IsOpen = true;
+                }
+                
+            }
+            else if(validate == 2)
+            {
+                if (PopupText != null && ErrorPopup != null)
+                {
+                    PopupText.Text = "Max. 15 characters.";
+                    ErrorPopup.IsOpen = true;
+                }
+            }
+            else if (validate == 3)
+            {
+                if (PopupText != null && ErrorPopup != null)
+                {
+                    PopupText.Text = "Only A-Z, a-z, 0-9 and '-'.";
+                    ErrorPopup.IsOpen = true;
+                }
+            }
+            else if (validate == 4)
+            {
+                if (PopupText != null && ErrorPopup != null)
+                {
+                    PopupText.Text = "HostName can't start with '-'.";
+                    ErrorPopup.IsOpen = true;
+                }
+            }
+            else if (validate == 5)
+            {
+                if (PopupText != null && ErrorPopup != null)
+                {
+                    PopupText.Text = "HostName can't be all digits.";
+                    ErrorPopup.IsOpen = true;
+                }
+            }
+            else if (validate == 6)
+            {
+                if (PopupText != null && ErrorPopup != null)
+                {
+                    PopupText.Text = "It is one of reserved names.";
+                    ErrorPopup.IsOpen = true;
+                }
+            }
+
+        }
     }
 }

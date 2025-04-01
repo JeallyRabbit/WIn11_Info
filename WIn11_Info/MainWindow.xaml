@@ -20,7 +20,20 @@
         <Button x:Name="btnShowLAN" Content="Show MAC LAN"  Margin="135,70,263,0" Height="40" VerticalAlignment="Top" Click="btnShowLAN_Click" ClipToBounds="True"/>
         <Button x:Name="btnShowWLAN" Content="Show MAC WLAN" Margin="260,70,138,0" Height="40" VerticalAlignment="Top" Click="btnShowWLAN_Click" ClipToBounds="True"/>
         <Button x:Name="btnSetHostName" Content="Set HostName"  Margin="385,70,13,0" Height="40" VerticalAlignment="Top" ClipToBounds="True" Click="btnSetHostName_Click"/>
-        <TextBox x:Name="txtBoxHostName" Margin="385,115,13,0" TextWrapping="Wrap" Text="HostName" VerticalAlignment="Top" Height="18" ClipToBounds="True" GotFocus="txtBoxHostName_GotFocus" MaxLines="1" FontWeight="Light" KeyDown="txtBoxHostNameKey_Down"/>
+        <TextBox x:Name="txtBoxHostName" Margin="385,115,13,0" TextWrapping="Wrap" Text="HostName" VerticalAlignment="Top" Height="18" MaxLength="16" ClipToBounds="True" GotFocus="txtBoxHostName_GotFocus" MaxLines="1" FontWeight="Light" KeyDown="txtBoxHostNameKey_Down" TextChanged="txtBoxHostName_TextChanged"/>
+        <Popup x:Name="ErrorPopup"
+               PlacementTarget="{Binding ElementName=txtBoxHostName}"
+               Placement="Right" 
+               StaysOpen="False"
+               IsOpen="False"
+               AllowsTransparency="True"
+               HorizontalOffset="5"
+            VerticalOffset="0">
+            <Border Background="OrangeRed" Padding="8" CornerRadius="5" 
+                BorderBrush="Red" BorderThickness="1">
+                <TextBlock x:Name="PopupText" Foreground="Black" />
+            </Border>
+        </Popup>
         <TextBox x:Name="txtBoxDhcpRecord" Margin="10,115,388,0" TextWrapping="Wrap" Text="192.168." ClipToBounds="True" SnapsToDevicePixels="True" Height="18" VerticalAlignment="Top"/>
         <Label x:Name="lblDhcpRecord1" Content="" HorizontalAlignment="Left" Margin="10,138,0,0" VerticalAlignment="Top" IsEnabled="False"/>
         <Label x:Name="lblDhcpRecord2" Content="" HorizontalAlignment="Left" Margin="10,168,0,0" VerticalAlignment="Top" IsEnabled="False"/>

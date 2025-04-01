@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.DirectoryServices.AccountManagement;
 
 namespace WIn11_Info
 {
@@ -26,7 +27,7 @@ namespace WIn11_Info
             passwordBoxCredentials.PasswordChar = '●';
             txtBoxDomainName.Focus();
         }
-        public bool isPassing = false;
+        public bool credentialsSuccess = false;
 
         private void txtBoxUserName_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -40,9 +41,32 @@ namespace WIn11_Info
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, txtBoxDomainName.Text))
+                {
+                    // validate the credentials
+                    bool isValid = pc.ValidateCredentials(txtBoxUserName.Text, passwordBoxCredentials.Password);
+                    if (isValid)
+                    {
+                        credentialsSuccess = true;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Wrong Credentials");
+                    }
+                }
+                if (credentialsSuccess)
+                {
+                    this.Close();
+                }
+            }
+            catch (PrincipalServerDownException ex)
+            {
+                MessageBox.Show($"Can't connect to domain: {txtBoxDomainName.Text}");
+            }
             
-            isPassing = true;
-            this.Close();
+            
         }
 
         private void btnCredentialsCancel_Click(object sender, RoutedEventArgs e)
