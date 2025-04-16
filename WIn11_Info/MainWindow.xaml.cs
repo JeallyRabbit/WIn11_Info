@@ -5,6 +5,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Threading;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -19,6 +20,8 @@ namespace WIn11_Info
         public MainWindow()
         {
             InitializeComponent();
+            lblDhcpRecord1.IsEnabled = false;
+            lblDhcpRecord2.IsEnabled = false; 
         }
 
         private void btnShowSN_Click(object sender, RoutedEventArgs e)
@@ -54,7 +57,7 @@ namespace WIn11_Info
                 String lan = Tools.GetLocalMac_Lan();
                 if (lan != "")
                 {
-                    btnShowLAN.Content = lan;
+                    btnShowLAN.Content = "LAN: "+lan;
                 }
                 else
                 {
@@ -75,7 +78,7 @@ namespace WIn11_Info
                 String mac=Tools.GetLocalMac_Wlan2();
                 if(mac!="0")
                 {
-                    btnShowWLAN.Content = mac;
+                    btnShowWLAN.Content = "WLAN: "+mac;
                 }
             }
             catch (Exception ex)
@@ -89,11 +92,13 @@ namespace WIn11_Info
         {
             btnShowLAN_Click(sender,e);
             btnShowWLAN_Click(sender, e);
+            lblDhcpRecord1.IsEnabled = true;
             lblDhcpRecord1.Content="host "+ System.Net.Dns.GetHostName().ToString()+"__LAN { hardware ethernet "+
-                btnShowLAN.Content+"; fixed-address "+txtBoxDhcpRecord.Text.ToString() + ";}\n";
+                Tools.GetLocalMac_Lan() +"; fixed-address "+txtBoxDhcpRecord.Text.ToString() + ";}\n";
 
-            lblDhcpRecord2.Content = "host " + System.Net.Dns.GetHostName().ToString() + "__LAN { hardware ethernet " +
-                btnShowWLAN.Content + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
+            lblDhcpRecord2.IsEnabled = true;
+            lblDhcpRecord2.Content = "host " + System.Net.Dns.GetHostName().ToString() + "__WLAN { hardware ethernet " +
+                Tools.GetLocalMac_Wlan2() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
         }
 
         private void btnSetHostName_Click(object sender, RoutedEventArgs e)
@@ -187,6 +192,24 @@ namespace WIn11_Info
                 }
             }
 
+        }
+
+        private void btnDhcpRecord1_Click(object sender, RoutedEventArgs e)
+        {
+            if(lblDhcpRecord1.IsVisible)
+            {
+                Clipboard.Clear();
+                Clipboard.SetText(lblDhcpRecord1.Content.ToString());
+            }
+        }
+
+        private void btnDhcpRecord2_Click(object sender, RoutedEventArgs e)
+        {
+            if (lblDhcpRecord2.IsVisible)
+            {
+                Clipboard.Clear();
+                Clipboard.SetText(lblDhcpRecord2.Content.ToString());
+            }
         }
     }
 }
