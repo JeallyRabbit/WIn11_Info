@@ -17,11 +17,17 @@ namespace WIn11_Info
     /// </summary>
     public partial class MainWindow : Window
     {
+        bool lanReadingSuccess = false;
+        bool wlanReadingSuccess = false;
         public MainWindow()
         {
             InitializeComponent();
             lblDhcpRecord1.IsEnabled = false;
-            lblDhcpRecord2.IsEnabled = false; 
+            btnDhcpRecord1.IsEnabled= false;
+            lblDhcpRecord2.IsEnabled = false;
+            btnDhcpRecord2.IsEnabled= false;
+
+            
         }
 
         private void btnShowSN_Click(object sender, RoutedEventArgs e)
@@ -58,10 +64,12 @@ namespace WIn11_Info
                 if (lan != "")
                 {
                     btnShowLAN.Content = "LAN: "+lan;
+                    lanReadingSuccess = true;
                 }
                 else
                 {
                     MessageBox.Show("Error reading MAC address");
+
                 }
             }
             catch (Exception ex)
@@ -79,6 +87,7 @@ namespace WIn11_Info
                 if(mac!="0")
                 {
                     btnShowWLAN.Content = "WLAN: "+mac;
+                    wlanReadingSuccess = true;
                 }
             }
             catch (Exception ex)
@@ -90,15 +99,33 @@ namespace WIn11_Info
 
         private void btnDhcpRecord_Click(object sender, RoutedEventArgs e)
         {
-            btnShowLAN_Click(sender,e);
-            btnShowWLAN_Click(sender, e);
-            lblDhcpRecord1.IsEnabled = true;
-            lblDhcpRecord1.Content="host "+ System.Net.Dns.GetHostName().ToString()+"__LAN { hardware ethernet "+
-                Tools.GetLocalMac_Lan() +"; fixed-address "+txtBoxDhcpRecord.Text.ToString() + ";}\n";
+            try
+            {
+                btnShowLAN_Click(sender, e);
+                btnShowWLAN_Click(sender, e);
+                if (lanReadingSuccess)
+                {
+                    lblDhcpRecord1.IsEnabled = true;
+                    btnDhcpRecord1.IsEnabled = true;
+                    lblDhcpRecord1.Content = "host " + System.Net.Dns.GetHostName().ToString() + "__LAN { hardware ethernet " +
+                        Tools.GetLocalMac_Lan() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
+                }
 
-            lblDhcpRecord2.IsEnabled = true;
-            lblDhcpRecord2.Content = "host " + System.Net.Dns.GetHostName().ToString() + "__WLAN { hardware ethernet " +
-                Tools.GetLocalMac_Wlan2() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
+                if(wlanReadingSuccess)
+                {
+                    lblDhcpRecord2.IsEnabled = true;
+                    btnDhcpRecord2.IsEnabled = true;
+                    lblDhcpRecord2.Content = "host " + System.Net.Dns.GetHostName().ToString() + "__WLAN { hardware ethernet " +
+                        Tools.GetLocalMac_Wlan2() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            
         }
 
         private void btnSetHostName_Click(object sender, RoutedEventArgs e)
@@ -198,7 +225,6 @@ namespace WIn11_Info
         {
             if(lblDhcpRecord1.IsVisible)
             {
-                Clipboard.Clear();
                 Clipboard.SetText(lblDhcpRecord1.Content.ToString());
             }
         }
@@ -207,7 +233,6 @@ namespace WIn11_Info
         {
             if (lblDhcpRecord2.IsVisible)
             {
-                Clipboard.Clear();
                 Clipboard.SetText(lblDhcpRecord2.Content.ToString());
             }
         }
