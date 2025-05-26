@@ -47,6 +47,20 @@
         <Label x:Name="lblDhcpRecord2" Content=""  Margin="74,167,17,0" VerticalAlignment="Top" IsEnabled="False" FontSize="11"/>
         <Button x:Name="btnDhcpRecord1" Content="Copy" Margin="16,137,551,0" VerticalAlignment="Top" Height="25" Click="btnDhcpRecord1_Click"/>
         <Button x:Name="btnDhcpRecord2" Content="Copy" Margin="16,167,551,0" VerticalAlignment="Top" Height="25" Click="btnDhcpRecord2_Click"/>
+        <Button x:Name="btnRam" Content="Show Ram" HorizontalAlignment="Left" Margin="470,197,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.185,-0.85" Height="40" Width="140" Click="Button_Click"/>
+        <Button x:Name="btnDisk" HorizontalAlignment="Left" Margin="320,197,0,0" VerticalAlignment="Top" Height="40" Width="140" Click="btnDisk_Click">
+            <TextBlock x:Name="txtBlockHardDisk" Text="Show HardDisk" TextAlignment="Center" TextWrapping="Wrap"/>
+        </Button>
+        <Button x:Name="btnExportCSV" HorizontalAlignment="Left" Margin="15,197,0,0" VerticalAlignment="Top" Height="40" Width="64" Click="btnExportCSV_Click">
+            <TextBlock Text="Export to .csv" Width="54" Height="33" TextAlignment="Center" TextWrapping="Wrap"/>
+        </Button>
+        <Button  x:Name="btnExportXML" HorizontalAlignment="Left" Margin="91,197,0,0" VerticalAlignment="Top" Height="40" Width="64">
+            <TextBlock Text="Export to .xml" Width="54" Height="32" TextAlignment="Center" TextWrapping="Wrap"/>
+        </Button>
+        <Label Content="Nr. Inw.: " HorizontalAlignment="Left" Margin="160,193,0,0" VerticalAlignment="Top" Height="26" Width="54"/>
+        <Label Content="ID: " HorizontalAlignment="Left" Margin="187,217,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txtBoxNrInw" HorizontalAlignment="Left" Margin="207,197,0,0" TextWrapping="Wrap" FontWeight="Light" Text="Nr. Inw." VerticalAlignment="Top" Width="103" GotFocus="txtBoxNrInw_GotFocus"/>
+        <TextBox x:Name="txtBoxId" HorizontalAlignment="Left" Margin="207,221,0,0" TextWrapping="Wrap" FontWeight="Light" Text="00000" VerticalAlignment="Top" Width="103" GotFocus="txtBoxId_GotFocus"/>
 
 
     </Grid>

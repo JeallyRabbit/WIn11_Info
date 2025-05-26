@@ -138,6 +138,7 @@ namespace WIn11_Info
             if(txtBoxHostName.Text=="HostName")
             {
                 txtBoxHostName.Text=String.Empty;
+                txtBoxHostName.FontWeight = FontWeights.Normal; txtBoxHostName.Focus();
             }
         }
 
@@ -236,5 +237,54 @@ namespace WIn11_Info
                 Clipboard.SetText(lblDhcpRecord2.Content.ToString());
             }
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                btnRam.Content = Tools.getRAM() + " GB";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void btnDisk_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                txtBlockHardDisk.Text = Tools.getLocalDisk();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void txtBoxNrInw_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (txtBoxNrInw.Text == "Nr. Inw.")
+            {
+                txtBoxNrInw.Text = String.Empty;
+                txtBoxNrInw.FontWeight = FontWeights.Normal;
+            }
+        }
+
+        private void txtBoxId_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (txtBoxId.Text == "00000")
+            {
+                txtBoxId.Text = String.Empty;
+                txtBoxId.FontWeight = FontWeights.Normal;
+            }
+        }
+
+        private void btnExportCSV_Click(object sender, RoutedEventArgs e)
+        {
+            Tools.exportToCsv(txtBoxNrInw.Text, txtBoxId.Text);
+        }
+
+       
     }
 }

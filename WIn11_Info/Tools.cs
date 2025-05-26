@@ -14,6 +14,42 @@ using System.Windows;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
+// For saving to csv
+using CsvHelper;
+using System.IO;
+using System.Globalization;
+
+
+
+public class ComputerUnit
+{
+    public string Sn { get; set; }
+    public string Ip { get; set; }
+    public string MacLan { get; set; }
+    public string MacWlan { get; set; }
+    public string Cpu { get; set; }
+    public string HostName { get; set; }
+    public string HardDisk { get; set; }
+    public string Ram { get; set; }
+    public string Nr { get; set; }
+    public string Id { get; set; }
+
+    // Constructor to populate properties using methods or constants
+    public ComputerUnit(string sn, string ip, string macLan, string macWlan, string cpu,
+                      string hostName, string hardDisk, string ram, string nr = null, string id = null)
+    {
+        Sn = sn;
+        Ip = ip;
+        MacLan = macLan;
+        MacWlan = macWlan;
+        Cpu = cpu;
+        HostName = hostName;
+        HardDisk = hardDisk;
+        Ram = ram;
+        Nr = nr;
+        Id = id;
+    }
+}
 
 namespace WIn11_Info
 {
@@ -51,7 +87,7 @@ namespace WIn11_Info
                 }
             }
             searcher.Dispose();
-            return "1";
+            return "0";
         }
 
         public static String getCPU()
@@ -217,6 +253,74 @@ namespace WIn11_Info
 
             // Passed all checks
             return 0;
+        }
+
+        public static string getRAM()
+        {
+            string ram = "";
+            ManagementObjectSearcher searcher =
+                new ManagementObjectSearcher("SELECT * from Win32_ComputerSystem");
+            foreach (ManagementObject obj in searcher.Get())
+            {
+                double Ram_Bytes = (Convert.ToDouble(obj["TotalPhysicalMemory"]));
+                Ram_Bytes /= 1073741824;
+                Ram_Bytes = Math.Ceiling(Ram_Bytes);
+                ram = (Ram_Bytes).ToString();
+            }
+            return ram;
+        }
+
+
+        public static string getLocalDisk()
+        {
+            string drive_info = "";
+            ManagementObjectSearcher harddisk =
+                new ManagementObjectSearcher("SELECT * from win32_DiskDrive");
+            foreach (ManagementObject obj in harddisk.Get())
+            {
+                drive_info += obj["Model"];
+                Int64 disk_bytes = Convert.ToInt64(obj["Size"]);
+                disk_bytes /= 1073741824;
+                drive_info += " Size: " + (disk_bytes).ToString() + "GB";
+            }
+            return drive_info;
+        }
+
+        public static int exportToCsv(String NR="",String ID="")
+        {
+            String Sn = GetLocalSN();
+            String Ip = GetLocalIPAddress();
+            String MacLan = GetLocalMac_Lan();
+            String MacWlan = GetLocalMac_Wlan2();
+            String Cpu = getCPU();
+            String HostName = System.Net.Dns.GetHostName();
+            String HardDisk = getLocalDisk();
+            String Ram = getRAM();
+            String Nr = NR;
+            String Id = ID;
+
+            if (HostName != "")
+            {
+                ComputerUnit unit = new ComputerUnit(Sn, Ip,MacLan,MacWlan,Cpu,HostName,HardDisk,Ram,Nr,Id);
+                String fileName = HostName + "_Report.csv";
+                using (var writer = new StreamWriter(fileName))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.WriteHeader<ComputerUnit>();
+                    csv.NextRecord(); // Move to next line after header
+                    csv.WriteRecord(unit);
+                    csv.NextRecord(); // Ensure newline
+                }
+
+
+            }
+            else
+            {//can't create file - invalid name
+
+            }
+
+
+            return 1;
         }
 
     }
