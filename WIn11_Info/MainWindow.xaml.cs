@@ -19,6 +19,10 @@ namespace WIn11_Info
     {
         bool lanReadingSuccess = false;
         bool wlanReadingSuccess = false;
+
+        String dhcpRecord1 = "";
+        String dhcpRecord2 = "";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -27,7 +31,6 @@ namespace WIn11_Info
             lblDhcpRecord2.IsEnabled = false;
             btnDhcpRecord2.IsEnabled= false;
 
-            
         }
 
         private void btnShowSN_Click(object sender, RoutedEventArgs e)
@@ -107,6 +110,11 @@ namespace WIn11_Info
                 {
                     lblDhcpRecord1.IsEnabled = true;
                     btnDhcpRecord1.IsEnabled = true;
+
+                    dhcpRecord1 = "host " + System.Net.Dns.GetHostName().ToString() + "_LAN { hardware ethernet " +
+                        Tools.GetLocalMac_Lan() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
+
+                    //Difference in double underscore for label element
                     lblDhcpRecord1.Content = "host " + System.Net.Dns.GetHostName().ToString() + "__LAN { hardware ethernet " +
                         Tools.GetLocalMac_Lan() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
                 }
@@ -115,6 +123,10 @@ namespace WIn11_Info
                 {
                     lblDhcpRecord2.IsEnabled = true;
                     btnDhcpRecord2.IsEnabled = true;
+                    dhcpRecord2= "host " + System.Net.Dns.GetHostName().ToString() + "_WLAN { hardware ethernet " +
+                        Tools.GetLocalMac_Wlan2() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
+
+                    //Difference in double underscore for label element
                     lblDhcpRecord2.Content = "host " + System.Net.Dns.GetHostName().ToString() + "__WLAN { hardware ethernet " +
                         Tools.GetLocalMac_Wlan2() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
                 }
@@ -226,7 +238,7 @@ namespace WIn11_Info
         {
             if(lblDhcpRecord1.IsVisible)
             {
-                Clipboard.SetText(lblDhcpRecord1.Content.ToString());
+                Clipboard.SetDataObject(dhcpRecord1);
             }
         }
 
@@ -234,7 +246,7 @@ namespace WIn11_Info
         {
             if (lblDhcpRecord2.IsVisible)
             {
-                Clipboard.SetText(lblDhcpRecord2.Content.ToString());
+                Clipboard.SetDataObject(dhcpRecord2);
             }
         }
 
@@ -285,6 +297,9 @@ namespace WIn11_Info
             Tools.exportToCsv(txtBoxNrInw.Text, txtBoxId.Text);
         }
 
-       
+        private void btnExportXML_Click(object sender, RoutedEventArgs e)
+        {
+            Tools.exportToXml(txtBoxNrInw.Text, txtBoxId.Text);
+        }
     }
 }

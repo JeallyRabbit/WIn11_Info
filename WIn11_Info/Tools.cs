@@ -19,6 +19,9 @@ using CsvHelper;
 using System.IO;
 using System.Globalization;
 
+// For saving to xml
+using System.Xml.Linq;
+
 
 
 public class ComputerUnit
@@ -301,7 +304,7 @@ namespace WIn11_Info
 
             if (HostName != "")
             {
-                ComputerUnit unit = new ComputerUnit(Sn, Ip,MacLan,MacWlan,Cpu,HostName,HardDisk,Ram,Nr,Id);
+                ComputerUnit unit = new ComputerUnit(Sn, Ip, MacLan, MacWlan, Cpu, HostName, HardDisk, Ram, Nr, Id);
                 String fileName = HostName + "_Report.csv";
                 using (var writer = new StreamWriter(fileName))
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
@@ -316,8 +319,57 @@ namespace WIn11_Info
             }
             else
             {//can't create file - invalid name
+                MessageBox.Show("Can't create report - invalid name (hostName)");
+            }
+
+
+            return 1;
+        }
+
+        public static int exportToXml(String NR="", String ID="")
+        {
+
+            String Sn = GetLocalSN();
+            String Ip = GetLocalIPAddress();
+            String MacLan = GetLocalMac_Lan();
+            String MacWlan = GetLocalMac_Wlan2();
+            String Cpu = getCPU();
+            String HostName = System.Net.Dns.GetHostName();
+            String HardDisk = getLocalDisk();
+            String Ram = getRAM();
+            String Nr = NR;
+            String Id = ID;
+
+            if (HostName != "")
+            {
+                ComputerUnit unit = new ComputerUnit(Sn, Ip, MacLan, MacWlan, Cpu, HostName, HardDisk, Ram, Nr, Id);
+                String fileName = HostName + "_Report.xml";
+                
+                XDocument doc = new XDocument(
+                    new XElement("Computer",
+                        new XElement("HostName",HostName),
+                        new XElement("SN",Sn),
+                        new XElement("IP",Ip),
+                        new XElement("MacLan",MacLan),
+                        new XElement("MacWlan",MacWlan),
+                        new XElement("Cpu",Cpu),
+                        new XElement("Ram",Ram),
+                        new XElement("HardDisk",HardDisk),
+                        new XElement("Nr",Nr),
+                        new XElement("ID",Id)
+                    )
+                );
+
+                doc.Save( fileName );
+                MessageBox.Show("Saved to: " + fileName);
+
 
             }
+            else
+            {//can't create file - invalid name
+                MessageBox.Show("Can't create report - invalid name (hostName)");
+            }
+
 
 
             return 1;

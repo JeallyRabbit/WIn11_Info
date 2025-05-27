@@ -54,7 +54,7 @@
         <Button x:Name="btnExportCSV" HorizontalAlignment="Left" Margin="15,197,0,0" VerticalAlignment="Top" Height="40" Width="64" Click="btnExportCSV_Click">
             <TextBlock Text="Export to .csv" Width="54" Height="33" TextAlignment="Center" TextWrapping="Wrap"/>
         </Button>
-        <Button  x:Name="btnExportXML" HorizontalAlignment="Left" Margin="91,197,0,0" VerticalAlignment="Top" Height="40" Width="64">
+        <Button  x:Name="btnExportXML" HorizontalAlignment="Left" Margin="91,197,0,0" VerticalAlignment="Top" Height="40" Width="64" Click="btnExportXML_Click">
             <TextBlock Text="Export to .xml" Width="54" Height="32" TextAlignment="Center" TextWrapping="Wrap"/>
         </Button>
         <Label Content="Nr. Inw.: " HorizontalAlignment="Left" Margin="160,193,0,0" VerticalAlignment="Top" Height="26" Width="54"/>
