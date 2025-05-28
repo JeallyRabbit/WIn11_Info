@@ -26,6 +26,7 @@ namespace WIn11_Info
         public MainWindow()
         {
             InitializeComponent();
+            btnSetHostName.IsEnabled = false;
             lblDhcpRecord1.IsEnabled = false;
             btnDhcpRecord1.IsEnabled= false;
             lblDhcpRecord2.IsEnabled = false;
@@ -86,7 +87,7 @@ namespace WIn11_Info
         {
             try
             {
-                String mac=Tools.GetLocalMac_Wlan2();
+                String mac=Tools.GetLocalMac_Wlan();
                 if(mac!="0")
                 {
                     btnShowWLAN.Content = "WLAN: "+mac;
@@ -124,11 +125,11 @@ namespace WIn11_Info
                     lblDhcpRecord2.IsEnabled = true;
                     btnDhcpRecord2.IsEnabled = true;
                     dhcpRecord2= "host " + System.Net.Dns.GetHostName().ToString() + "_WLAN { hardware ethernet " +
-                        Tools.GetLocalMac_Wlan2() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
+                        Tools.GetLocalMac_Wlan() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
 
                     //Difference in double underscore for label element
                     lblDhcpRecord2.Content = "host " + System.Net.Dns.GetHostName().ToString() + "__WLAN { hardware ethernet " +
-                        Tools.GetLocalMac_Wlan2() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
+                        Tools.GetLocalMac_Wlan() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
                 }
                 
             }
@@ -250,7 +251,7 @@ namespace WIn11_Info
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void btnShowRam_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -262,7 +263,7 @@ namespace WIn11_Info
             }
         }
 
-        private void btnDisk_Click(object sender, RoutedEventArgs e)
+        private void btnShowDisk_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -300,6 +301,28 @@ namespace WIn11_Info
         private void btnExportXML_Click(object sender, RoutedEventArgs e)
         {
             Tools.exportToXml(txtBoxNrInw.Text, txtBoxId.Text);
+        }
+
+        private void btnShowAll_Click(object sender, RoutedEventArgs e)
+        {
+            btnShowSN_Click(sender, e);
+            btnShowCPU_Click(sender, e);
+            btnShowHostName_Click(sender, e);
+            btnShowIP_Click(sender, e);
+            btnShowLAN_Click(sender, e);
+            btnShowWLAN_Click(sender, e);
+            btnShowRam_Click(sender, e);
+            btnShowDisk_Click(sender, e);
+        }
+
+        private void btnSetLocalAdmin_Click(object sender, RoutedEventArgs e)
+        {
+            Tools.setLocalAdmin();
+        }
+
+        private void btnSetLastUser_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

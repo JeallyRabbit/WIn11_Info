@@ -130,7 +130,7 @@ namespace WIn11_Info
             return lan;
         }
 
-        public static string GetLocalMac_Wlan2()
+        public static string GetLocalMac_Wlan()
         {
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_NetworkAdapter");
             ManagementObjectCollection adapters = searcher.Get();
@@ -294,7 +294,7 @@ namespace WIn11_Info
             String Sn = GetLocalSN();
             String Ip = GetLocalIPAddress();
             String MacLan = GetLocalMac_Lan();
-            String MacWlan = GetLocalMac_Wlan2();
+            String MacWlan = GetLocalMac_Wlan();
             String Cpu = getCPU();
             String HostName = System.Net.Dns.GetHostName();
             String HardDisk = getLocalDisk();
@@ -332,7 +332,7 @@ namespace WIn11_Info
             String Sn = GetLocalSN();
             String Ip = GetLocalIPAddress();
             String MacLan = GetLocalMac_Lan();
-            String MacWlan = GetLocalMac_Wlan2();
+            String MacWlan = GetLocalMac_Wlan();
             String Cpu = getCPU();
             String HostName = System.Net.Dns.GetHostName();
             String HardDisk = getLocalDisk();
@@ -373,6 +373,52 @@ namespace WIn11_Info
 
 
             return 1;
+        }
+
+        public static bool setLocalAdmin()
+        {
+            string userName = "Administrator";
+            string password = "";
+            adminPasswordForm passwordForm = new adminPasswordForm();
+            passwordForm.ShowDialog();
+
+            if (passwordForm.IsActive == false)
+            {
+                if (passwordForm.credentialsSuccess == false) { return false; }
+                password = passwordForm.passwdBoxPassword.Password;
+            }
+
+            if(password!="")
+            {
+
+                // Set password
+                RunCommand($"net user {userName} {password}");
+
+                // Enable account
+                RunCommand($"net user {userName} /active:yes");
+
+                Console.WriteLine("Administrator account updated.");
+            
+
+                static void RunCommand(string command)
+                {
+                    ProcessStartInfo psi = new ProcessStartInfo("cmd.exe", "/c " + command)
+                    {
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        Verb = "runas" // Run as administrator
+                    };
+
+                    using (Process process = Process.Start(psi))
+                    {
+                        process.WaitForExit();
+                        string output = process.StandardOutput.ReadToEnd();
+                        Console.WriteLine(output);
+                    }
+                }
+        }
+            return true;
         }
 
     }

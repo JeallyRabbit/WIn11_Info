@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WIn11_Info"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="625"
+        Title="MainWindow" Height="345" Width="625"
         ResizeMode="NoResize"
         >
     <Window.Resources>
@@ -47,8 +47,8 @@
         <Label x:Name="lblDhcpRecord2" Content=""  Margin="74,167,17,0" VerticalAlignment="Top" IsEnabled="False" FontSize="11"/>
         <Button x:Name="btnDhcpRecord1" Content="Copy" Margin="16,137,551,0" VerticalAlignment="Top" Height="25" Click="btnDhcpRecord1_Click"/>
         <Button x:Name="btnDhcpRecord2" Content="Copy" Margin="16,167,551,0" VerticalAlignment="Top" Height="25" Click="btnDhcpRecord2_Click"/>
-        <Button x:Name="btnRam" Content="Show Ram" HorizontalAlignment="Left" Margin="470,197,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.185,-0.85" Height="40" Width="140" Click="Button_Click"/>
-        <Button x:Name="btnDisk" HorizontalAlignment="Left" Margin="320,197,0,0" VerticalAlignment="Top" Height="40" Width="140" Click="btnDisk_Click">
+        <Button x:Name="btnRam" Content="Show Ram" HorizontalAlignment="Left" Margin="470,197,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.185,-0.85" Height="40" Width="140" Click="btnShowRam_Click"/>
+        <Button x:Name="btnDisk" HorizontalAlignment="Left" Margin="320,197,0,0" VerticalAlignment="Top" Height="40" Width="140" Click="btnShowDisk_Click">
             <TextBlock x:Name="txtBlockHardDisk" Text="Show HardDisk" TextAlignment="Center" TextWrapping="Wrap"/>
         </Button>
         <Button x:Name="btnExportCSV" HorizontalAlignment="Left" Margin="15,197,0,0" VerticalAlignment="Top" Height="40" Width="64" Click="btnExportCSV_Click">
@@ -61,6 +61,9 @@
         <Label Content="ID: " HorizontalAlignment="Left" Margin="187,217,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txtBoxNrInw" HorizontalAlignment="Left" Margin="207,197,0,0" TextWrapping="Wrap" FontWeight="Light" Text="Nr. Inw." VerticalAlignment="Top" Width="103" GotFocus="txtBoxNrInw_GotFocus"/>
         <TextBox x:Name="txtBoxId" HorizontalAlignment="Left" Margin="207,221,0,0" TextWrapping="Wrap" FontWeight="Light" Text="00000" VerticalAlignment="Top" Width="103" GotFocus="txtBoxId_GotFocus"/>
+        <Button x:Name="btnShowAll" Content="Show All" HorizontalAlignment="Left" Margin="470,242,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.185,-0.85" Height="40" Width="140" Click="btnShowAll_Click"/>
+        <Button x:Name="btnSetLocalAdmin" Content="Set Local Administrator" HorizontalAlignment="Left" Margin="15,242,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.185,-0.85" Height="40" Width="140" Click="btnSetLocalAdmin_Click"/>
+        <Button x:Name="btnSetLastUser" Content="Set last user" HorizontalAlignment="Left" Margin="170,242,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.185,-0.85" Height="40" Width="140" Click="btnSetLastUser_Click"/>
 
 
     </Grid>
