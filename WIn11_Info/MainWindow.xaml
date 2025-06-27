@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WIn11_Info"
         mc:Ignorable="d"
-        Title="MainWindow" Height="345" Width="625"
+        Title="Win11" Height="345" Width="625"
         ResizeMode="NoResize"
         >
     <Window.Resources>

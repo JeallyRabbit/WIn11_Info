@@ -322,7 +322,7 @@ namespace WIn11_Info
 
         private void btnSetLastUser_Click(object sender, RoutedEventArgs e)
         {
-
+            Tools.setLastUser();
         }
     }
 }

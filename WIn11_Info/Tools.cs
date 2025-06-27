@@ -21,6 +21,7 @@ using System.Globalization;
 
 // For saving to xml
 using System.Xml.Linq;
+using Microsoft.Win32;
 
 
 
@@ -419,6 +420,43 @@ namespace WIn11_Info
                 }
         }
             return true;
+        }
+
+        public static void setLastUser()
+        {
+
+            string userName = "";
+            string domainName = "";
+            lastUserForm userForm = new lastUserForm();
+            userForm.ShowDialog();
+
+            if (userForm.IsActive == false)
+            {
+                if (userForm.lastUserSuccess == false) { return; }
+                userName=userForm.txtBoxUserName.Text;
+                domainName=userForm.txtBoxDomainName.Text;
+            }
+            if(userName!="" && domainName!="")
+            {
+                const string registryEntry = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Authentication\\LogonUI\\";
+                string onDisplayKey = "LastLoggedOnDisplayName";
+                string onSamUserKey = "LastLoggedOnSAMUser";
+                string onUserKey = "LastLoggedOnUser";
+
+
+                Registry.SetValue(registryEntry , onDisplayKey, userName);
+                Registry.SetValue(registryEntry , onSamUserKey, domainName+"\\"+userName);
+                Registry.SetValue(registryEntry , onUserKey, domainName + "\\" + userName);
+
+                MessageBox.Show("Successfully set last user.");
+
+            }
+            else
+            {
+                MessageBox.Show("Invalid userName or domainName");
+            }
+
+
         }
 
     }
