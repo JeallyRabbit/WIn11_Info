@@ -324,5 +324,10 @@ namespace WIn11_Info
         {
             Tools.setLastUser();
         }
+
+        private void btnSaveToDatabase_Click(object sender, RoutedEventArgs e)
+        {
+            Tools.saveToDatabase();
+        }
     }
 }

@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿// For saving to csv
+using CsvHelper;
+using Microsoft.Win32;
+// For saving to sql database
+using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 // Allows to use Win32 Classes
 using System.Management;
-
+using System.Net;
 using System.Net.NetworkInformation;
-using System.Windows;
-using System.Diagnostics;
+using System.Net.Sockets;
+using System.Numerics;
 using System.Text.RegularExpressions;
-
-// For saving to csv
-using CsvHelper;
-using System.IO;
-using System.Globalization;
-
+using System.Windows;
 // For saving to xml
 using System.Xml.Linq;
-using Microsoft.Win32;
 
 
 
@@ -456,6 +450,102 @@ namespace WIn11_Info
                 MessageBox.Show("Invalid userName or domainName");
             }
 
+
+        }
+
+        static void ensureDataBaseExists(string masterConnStr, string dbName)
+        {
+            string checkDbSql = $@"
+            IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'{dbName}')
+            BEGIN
+                CREATE DATABASE {dbName}
+            END";
+
+            using var connection = new SqlConnection(masterConnStr);
+            using var command = new SqlCommand(checkDbSql, connection);
+            connection.Open(); 
+            command.ExecuteNonQuery();
+        }
+
+
+        static void ensureTableExists(string dbConnStr,string tabName)
+        {
+            string createTableSql = $@"
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabName}') BEGIN
+                CREATE TABLE PCs (
+                    ID INT IDENTITY PRIMARY KEY,
+                     Sn NVARCHAR(30),
+                     Ip NVARCHAR(15),
+                     MacLan NVARCHAR(17),
+                     MacWlan NVARCHAR(17),
+                     Cpu NVARCHAR(100),
+                     HostName NVARCHAR(100),
+                     HardDisk NVARCHAR(100),
+                     Ram NVARCHAR(100),
+                     Nr NVARCHAR(10),
+                     Id_Number NVARCHAR(20)
+                )
+            END";
+
+            using var connection = new SqlConnection(dbConnStr);
+            using var command = new SqlCommand(createTableSql, connection);
+            connection.Open();
+            command.ExecuteNonQuery();
+        }
+
+        static void InsertPC(string dbConnStr, string tabName, string NR="000000", string Id_Numberd="000000")
+        {
+            string insertSql = $"INSERT INTO {tabName} "+
+                @"(Sn, Ip,MacLan,MacWlan ,Cpu ,HostName ,HardDisk ,Ram ,Nr ,Id_Number) 
+    VALUES (@Sn, @Ip,@MacLan,@MacWlan ,@Cpu ,@HostName ,@HardDisk ,@Ram ,@Nr ,@Id_Number)";
+
+            using var connection = new SqlConnection(dbConnStr);
+            using var command = new SqlCommand(insertSql, connection);
+
+            String Sn = GetLocalSN();//
+            String Ip = GetLocalIPAddress();//
+            String MacLan = GetLocalMac_Lan();//
+            String MacWlan = GetLocalMac_Wlan();//
+            String Cpu = getCPU();//
+            String HostName = System.Net.Dns.GetHostName();//
+            String HardDisk = getLocalDisk();
+            String Ram = getRAM();//
+            String Nr = NR;//
+            String IdNumber = Id_Numberd;//
+
+
+            command.Parameters.AddWithValue("@Sn", Sn);
+            command.Parameters.AddWithValue("@Ip", Ip);
+            command.Parameters.AddWithValue("@MacLan", MacLan);
+            command.Parameters.AddWithValue("@MacWlan", MacWlan);
+            command.Parameters.AddWithValue("@HostName", HostName);
+            command.Parameters.AddWithValue("@HardDisk", HardDisk);
+            command.Parameters.AddWithValue("@Ram", Ram);
+            command.Parameters.AddWithValue("@Nr", Nr);
+            command.Parameters.AddWithValue("@Id_Number", IdNumber);
+            command.Parameters.AddWithValue("@Cpu", Cpu);
+            connection.Open();
+            command.ExecuteNonQuery();
+        }
+
+
+        public static void saveToDatabase(String NR = "", String ID = "")
+        {
+
+            string server = "localhost\\SQLEXPRESS01"; // or  SQL Server name
+            string userName = "UserName";
+            string Password = "Password";
+            string dbName = "master";
+            string tabName = "PCs";
+            //"Server=localhost\\SQLEXPRESS01;Database=master;Trusted_Connection=True;"
+            string masterConnectionString = $"Server={server};Database=master;Integrated Security=true;";
+            string appConnectionString = $"Server={server};Database={dbName};Integrated Security=true;";
+
+            ensureDataBaseExists(masterConnectionString, dbName);
+            ensureTableExists(appConnectionString,tabName);
+            InsertPC(appConnectionString,tabName,NR,ID);
+
+            MessageBox.Show("User inserted successfully.");
 
         }
 

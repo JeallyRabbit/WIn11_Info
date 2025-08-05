@@ -62,8 +62,9 @@
         <TextBox x:Name="txtBoxNrInw" HorizontalAlignment="Left" Margin="207,197,0,0" TextWrapping="Wrap" FontWeight="Light" Text="Nr. Inw." VerticalAlignment="Top" Width="103" GotFocus="txtBoxNrInw_GotFocus"/>
         <TextBox x:Name="txtBoxId" HorizontalAlignment="Left" Margin="207,221,0,0" TextWrapping="Wrap" FontWeight="Light" Text="00000" VerticalAlignment="Top" Width="103" GotFocus="txtBoxId_GotFocus"/>
         <Button x:Name="btnShowAll" Content="Show All" HorizontalAlignment="Left" Margin="470,242,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.185,-0.85" Height="40" Width="140" Click="btnShowAll_Click"/>
-        <Button x:Name="btnSetLocalAdmin" Content="Set Local Administrator" HorizontalAlignment="Left" Margin="15,242,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.185,-0.85" Height="40" Width="140" Click="btnSetLocalAdmin_Click"/>
+        <Button x:Name="btnSetLocalAdmin" Content="Set Local Administrator" HorizontalAlignment="Left" Margin="320,242,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.185,-0.85" Height="40" Width="140" Click="btnSetLocalAdmin_Click"/>
         <Button x:Name="btnSetLastUser" Content="Set last user" HorizontalAlignment="Left" Margin="170,242,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.185,-0.85" Height="40" Width="140" Click="btnSetLastUser_Click"/>
+        <Button x:Name="btnSaveToDatabase" Content="Save to Database" HorizontalAlignment="Left" Margin="16,242,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.185,-0.85" Height="40" Width="140" Click="btnSaveToDatabase_Click" />
 
 
     </Grid>
