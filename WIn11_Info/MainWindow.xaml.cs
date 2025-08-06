@@ -327,7 +327,7 @@ namespace WIn11_Info
 
         private void btnSaveToDatabase_Click(object sender, RoutedEventArgs e)
         {
-            Tools.saveToDatabase();
+            Tools.saveToDatabase(Tools.GetLocalSN(),txtBoxNrInw.Text.ToString(),txtBoxId.Text.ToString());
         }
     }
 }

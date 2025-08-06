@@ -493,8 +493,34 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabN
             command.ExecuteNonQuery();
         }
 
-        static void InsertPC(string dbConnStr, string tabName, string NR="000000", string Id_Numberd="000000")
+        static bool isInDatabase(string dbConnStr, string tabName,string sn="", string NR = "000000", string Id_Numberd = "000000")
         {
+            string result = "";
+            string selectSql = $"SELECT * FROM {tabName} WHERE Sn = '{sn}' ";
+            using (var connection = new SqlConnection(dbConnStr))
+            using (var command = new SqlCommand(selectSql, connection))
+            {
+                connection.Open();
+
+                using (var reader = command.ExecuteReader())
+                {
+                    if(reader.Read())
+                    {
+                        MessageBox.Show($"PC: {sn} is already in database");
+                        return true;
+                    }
+                }
+            }
+                
+
+            return false;
+        }
+
+            static void insertPC(string dbConnStr, string tabName, string NR="000000", string Id_Numberd="000000")
+        {
+
+
+
             string insertSql = $"INSERT INTO {tabName} "+
                 @"(Sn, Ip,MacLan,MacWlan ,Cpu ,HostName ,HardDisk ,Ram ,Nr ,Id_Number) 
     VALUES (@Sn, @Ip,@MacLan,@MacWlan ,@Cpu ,@HostName ,@HardDisk ,@Ram ,@Nr ,@Id_Number)";
@@ -525,11 +551,22 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabN
             command.Parameters.AddWithValue("@Id_Number", IdNumber);
             command.Parameters.AddWithValue("@Cpu", Cpu);
             connection.Open();
-            command.ExecuteNonQuery();
+
+            int insertResult = command.ExecuteNonQuery();
+            if (insertResult==1)
+            {
+                MessageBox.Show("User inserted successfully.");
+            }
+            else
+            {
+                MessageBox.Show($"Affected: {insertResult} rows.");
+            }
+
+            
         }
 
 
-        public static void saveToDatabase(String NR = "", String ID = "")
+        public static void saveToDatabase(String SN="",String NR = "", String ID = "")
         {
 
             string server = "localhost\\SQLEXPRESS01"; // or  SQL Server name
@@ -543,9 +580,13 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabN
 
             ensureDataBaseExists(masterConnectionString, dbName);
             ensureTableExists(appConnectionString,tabName);
-            InsertPC(appConnectionString,tabName,NR,ID);
+            if(isInDatabase(appConnectionString, tabName, SN, NR, ID)==false)
+            {
+                insertPC(appConnectionString,tabName,NR,ID);
+            }
+            
 
-            MessageBox.Show("User inserted successfully.");
+            
 
         }
 
