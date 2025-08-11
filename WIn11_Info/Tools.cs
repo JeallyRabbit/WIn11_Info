@@ -590,5 +590,16 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabN
 
         }
 
+        public static void btnShowNetwork_Click()
+        {
+            showNetwork networkForm = new showNetwork();
+            networkForm.ShowDialog();
+
+            if (networkForm.IsActive == false)
+            {
+                return;
+            }
+        }
+
     }
 }

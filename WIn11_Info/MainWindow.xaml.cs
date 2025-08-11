@@ -42,12 +42,13 @@ namespace WIn11_Info
                 btnShowSN.Content = "SN: " + sn;
             }
         }
-
+        /*
         private void btnShowIP_Click(object sender, RoutedEventArgs e)
         {
             String ip=Tools.GetLocalIPAddress();
             btnShowIP.Content = ip;
         }
+        */
 
         private void btnShowCPU_Click(object sender, RoutedEventArgs e)
         {
@@ -60,6 +61,7 @@ namespace WIn11_Info
             btnShowHostName.Content=System.Net.Dns.GetHostName();
         }
 
+        /*
         private void btnShowLAN_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -82,7 +84,9 @@ namespace WIn11_Info
             }
             
         }
+        */
 
+        /*
         private void btnShowWLAN_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -100,13 +104,14 @@ namespace WIn11_Info
             }
             
         }
+        */
 
         private void btnDhcpRecord_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                btnShowLAN_Click(sender, e);
-                btnShowWLAN_Click(sender, e);
+                //btnShowLAN_Click(sender, e);
+                //btnShowWLAN_Click(sender, e);
                 if (lanReadingSuccess)
                 {
                     lblDhcpRecord1.IsEnabled = true;
@@ -308,9 +313,9 @@ namespace WIn11_Info
             btnShowSN_Click(sender, e);
             btnShowCPU_Click(sender, e);
             btnShowHostName_Click(sender, e);
-            btnShowIP_Click(sender, e);
-            btnShowLAN_Click(sender, e);
-            btnShowWLAN_Click(sender, e);
+            //btnShowIP_Click(sender, e);
+            //btnShowLAN_Click(sender, e);
+            //btnShowWLAN_Click(sender, e);
             btnShowRam_Click(sender, e);
             btnShowDisk_Click(sender, e);
         }
@@ -328,6 +333,12 @@ namespace WIn11_Info
         private void btnSaveToDatabase_Click(object sender, RoutedEventArgs e)
         {
             Tools.saveToDatabase(Tools.GetLocalSN(),txtBoxNrInw.Text.ToString(),txtBoxId.Text.ToString());
+        }
+
+
+        private void btnShowNetwork_Click(object sender, RoutedEventArgs e)
+        {
+            Tools.btnShowNetwork_Click();
         }
     }
 }

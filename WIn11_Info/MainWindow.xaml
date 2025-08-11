@@ -19,14 +19,12 @@
     <Grid HorizontalAlignment="Center" Width="625">
 
         <Button x:Name="btnShowSN" Content="ShowSN" Margin="10,20,465,0" Height="40" Width="140" VerticalAlignment="Top" Click="btnShowSN_Click" ClipToBounds="True"/>
-        <Button x:Name="btnShowIP" Content="Show IP" Margin="165,20,310,0" Height="40" Width="140" VerticalAlignment="Top" Click="btnShowIP_Click" ClipToBounds="True" RenderTransformOrigin="0.625,3.451"/>
+        <Button x:Name="btnShowNetworkk" Content="Show Network" Margin="165,20,310,0" Height="40" Width="140" VerticalAlignment="Top" Click="btnShowNetwork_Click" ClipToBounds="True" RenderTransformOrigin="0.625,3.451"/>
         <Button x:Name="btnShowCPU" Margin="320,20,165,0" Height="40" Width="140" VerticalAlignment="Top" Click="btnShowCPU_Click" ClipToBounds="True">
             <TextBlock x:Name="txtBlockCpu" Text="Show CPU" TextWrapping="Wrap" TextAlignment="Center"/>
         </Button>
         <Button x:Name="btnShowHostName" Content="Show HostName" Margin="470,20,15,0" Height="40"  Width="140" VerticalAlignment="Top" Click="btnShowHostName_Click" ClipToBounds="True"/>
         <Button x:Name="btnDhcpRecord" Content="Make DHCP Record" Margin="10,70,465,0" Height="40" Width="140" VerticalAlignment="Top" Click="btnDhcpRecord_Click" ClipToBounds="True" />
-        <Button x:Name="btnShowLAN" Content="Show MAC LAN"  Margin="320,70,165,0" Height="40" Width="140" VerticalAlignment="Top" Click="btnShowLAN_Click" ClipToBounds="True"/>
-        <Button x:Name="btnShowWLAN" Content="Show MAC WLAN" Margin="165,70,310,0" Height="40" Width="140" VerticalAlignment="Top" Click="btnShowWLAN_Click" ClipToBounds="True"/>
         <Button x:Name="btnSetHostName" Content="Set HostName"  Margin="470,70,15,0" Height="40" Width="140" VerticalAlignment="Top" ClipToBounds="True" Click="btnSetHostName_Click"/>
         <TextBox x:Name="txtBoxHostName" Margin="470,115,15,0" TextWrapping="Wrap" Text="HostName" VerticalAlignment="Top" Height="18" MaxLength="16" ClipToBounds="True" GotFocus="txtBoxHostName_GotFocus" MaxLines="1" FontWeight="Light" KeyDown="txtBoxHostNameKey_Down" TextChanged="txtBoxHostName_TextChanged"/>
         <Popup x:Name="ErrorPopup"
