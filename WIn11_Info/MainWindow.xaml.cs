@@ -52,8 +52,9 @@ namespace WIn11_Info
 
         private void btnShowCPU_Click(object sender, RoutedEventArgs e)
         {
-            String cpu=Tools.getCPU();
-            txtBlockCpu.Text = cpu;
+            //String cpu=Tools.getCpu();
+            //txtBlockCpu.Text = cpu;
+            Tools.showCpu();
         }
 
         private void btnShowHostName_Click(object sender, RoutedEventArgs e)

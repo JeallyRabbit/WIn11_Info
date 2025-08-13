@@ -88,7 +88,31 @@ namespace WIn11_Info
             return "0";
         }
 
-        public static String getCPU()
+        public static void showCpu()
+        {
+
+            ShowCpu showCpu = new ShowCpu();
+            showCpu.ShowDialog();
+
+            if (showCpu.IsActive == false)
+            {
+                return;
+            }
+
+            /*
+            String cpu = "";
+            ManagementObjectSearcher searcher =
+                new ManagementObjectSearcher("SELECT Name from Win32_Processor");
+            foreach (ManagementObject obj in searcher.Get())
+            {
+                cpu += obj["Name"];
+            }
+
+            return cpu;
+            */
+        }
+
+        public static String getCpu()
         {
             String cpu = "";
             ManagementObjectSearcher searcher =
@@ -290,7 +314,7 @@ namespace WIn11_Info
             String Ip = GetLocalIPAddress();
             String MacLan = GetLocalMac_Lan();
             String MacWlan = GetLocalMac_Wlan();
-            String Cpu = getCPU();
+            String Cpu = getCpu();
             String HostName = System.Net.Dns.GetHostName();
             String HardDisk = getLocalDisk();
             String Ram = getRAM();
@@ -328,7 +352,7 @@ namespace WIn11_Info
             String Ip = GetLocalIPAddress();
             String MacLan = GetLocalMac_Lan();
             String MacWlan = GetLocalMac_Wlan();
-            String Cpu = getCPU();
+            String Cpu = getCpu();
             String HostName = System.Net.Dns.GetHostName();
             String HardDisk = getLocalDisk();
             String Ram = getRAM();
@@ -532,7 +556,7 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabN
             String Ip = GetLocalIPAddress();//
             String MacLan = GetLocalMac_Lan();//
             String MacWlan = GetLocalMac_Wlan();//
-            String Cpu = getCPU();//
+            String Cpu = getCpu();//
             String HostName = System.Net.Dns.GetHostName();//
             String HardDisk = getLocalDisk();
             String Ram = getRAM();//

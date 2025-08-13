@@ -31,14 +31,14 @@ namespace WIn11_Info
             {
 
                 string dhcpRecordLan = "host " + System.Net.Dns.GetHostName().ToString() + "__LAN { hardware ethernet " +
-                    Tools.GetLocalMac_Lan() + "; fixed-address " + this.lblIP.Content + ";}\n";
+                    Tools.GetLocalMac_Lan() + "; fixed-address " + Tools.GetLocalIPAddress() + ";}\n";
 
                 lblDhcpLan.Content = dhcpRecordLan;
 
 
 
                 string dhcpRecordWlan = "host " + System.Net.Dns.GetHostName().ToString() + "__WLAN { hardware ethernet " +
-                    Tools.GetLocalMac_Wlan() + "; fixed-address " + this.lblIP.Content + ";}\n";
+                    Tools.GetLocalMac_Wlan() + "; fixed-address " + Tools.GetLocalIPAddress() + ";}\n";
 
                 lblDhcpWlan.Content = dhcpRecordWlan;
 
@@ -60,6 +60,26 @@ namespace WIn11_Info
         private void lblDhcpWlan_myClick(object sender, MouseButtonEventArgs e)
         {
             Clipboard.SetDataObject(lblDhcpWlan.Content);
+        }
+
+        private void lblDhclWlanMouseEnter(object sender, MouseEventArgs e)
+        {
+            lblDhcpWlan.FontSize = 12;
+        }
+
+        private void lblDhclLanMouseEnter(object sender, MouseEventArgs e)
+        {
+            lblDhcpLan.FontSize = 12;
+        }
+
+        private void lblDhclLanMouseLeave(object sender, MouseEventArgs e)
+        {
+            lblDhcpLan.FontSize = 11;
+        }
+
+        private void lblDhcpWlanMouseLeave(object sender, MouseEventArgs e)
+        {
+            lblDhcpWlan.FontSize = 11;
         }
     }
 }
