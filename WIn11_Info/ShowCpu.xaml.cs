@@ -63,6 +63,7 @@ namespace WIn11_Info
             }
         }
 
+
         public ShowCpu()
         {
             InitializeComponent();
@@ -71,7 +72,9 @@ namespace WIn11_Info
             ConsoleAllocator.ShowConsoleWindow();
             ///////////////
 
+            
             var cpuid = CPUID.Instance;
+            
 
             if (!cpuid.IsAvailable)
             {
@@ -107,14 +110,76 @@ namespace WIn11_Info
 
             // 4. Cores amount
             
-            Console.WriteLine($"Cores: {Environment.ProcessorCount}");
+            Console.WriteLine($"Threads: {Environment.ProcessorCount}");
             
 
             //5 Cache Size
             var cacheSizeQuerry = cpuid.Leafs.GetProperty(LeafProperty.DeterministicCacheParameters.CacheSize);
 
+            ////lahf/sahf, SSE3, SSE4.1/4.2,  EM64T, AES, AVX512, FMA3/4
+            ///
+
+            //6 lahf/sahf
+            var lahfsahfResult = cpuid.Leafs.GetProperty(LeafProperty.ExtendedProcessorInfoAndFeatures.LAHF_SAHF);
+            if (lahfsahfResult.Success)
+            {
+                Console.WriteLine($"lahfsahfResult : {lahfsahfResult.Result.Value}");
+            }
+
+            //7 SSE3
+            var sse3Result = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.SSE3);
+            if (sse3Result.Success)
+            {
+                Console.WriteLine($"sse3Result : {sse3Result.Result.Value}");
+            }
+
+            //8 SSE4.1
+            var sse41Result = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.SSE41);
+            if (sse41Result.Success)
+            {
+                Console.WriteLine($"sse41Result : {sse41Result.Result.Value}");
+            }
+
+            //9 SSE4.2
+            var sse42Result = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.SSE42);
+            if (sse42Result.Success)
+            {
+                Console.WriteLine($"sse42Result : {sse42Result.Result.Value}");
+            }
+
+            //10 EM64T
+            var em64tResult = cpuid.Leafs.GetProperty(LeafProperty.ExtendedProcessorInfoAndFeatures.I64);
+            if (em64tResult.Success)
+            {
+                Console.WriteLine($"em64tResult : {em64tResult.Result.Value}"); // False
+                var architecture = System.Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
+                Console.WriteLine($"ArchitectureL {architecture}"); // -> AMD64
+            }
+
+            
+
+            //11 AES
+            var aesResult =cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.AES);
+            if (aesResult.Success)
+            {
+                Console.WriteLine($"aesResult: {aesResult.Result.Value}");
+            }
+
+            //12 AVX512 - we use "_F" since it: "expands most 32-bit and 64-bit based AVX instructions"
+            var avx512Result = cpuid.Leafs.GetProperty(LeafProperty.ExtendedFeatures.AVX512_F);
+            if (avx512Result.Success)
+            {
+                Console.WriteLine($"avx512Result: {avx512Result.Result.Value}");
+            }
+
+            //13 FMA3/4
+            var fmaResult = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.FMA);
+            if (fmaResult.Success)
+            {
+                Console.WriteLine($"fmaResult: {fmaResult.Result.Value}");
+            }
             /*(
-            // 3. Family
+             3. Family
             var family = cpuid[Leafs.BasicInformation][0].GetProperty(Properties.Family).Value;
             Console.WriteLine($"Family: {family}");
 
