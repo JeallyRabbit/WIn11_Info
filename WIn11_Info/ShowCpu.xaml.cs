@@ -16,6 +16,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Runtime.Intrinsics.X86;
+using System.Printing;
+
 
 namespace WIn11_Info
 {
@@ -72,7 +75,7 @@ namespace WIn11_Info
             ConsoleAllocator.ShowConsoleWindow();
             ///////////////
 
-            
+            List<string> supportedFeatures = new List<string>();
             var cpuid = CPUID.Instance;
             
 
@@ -124,6 +127,7 @@ namespace WIn11_Info
             if (lahfsahfResult.Success)
             {
                 Console.WriteLine($"lahfsahfResult : {lahfsahfResult.Result.Value}");
+                supportedFeatures.Add("lahf/sahf");
             }
 
             //7 SSE3
@@ -131,6 +135,7 @@ namespace WIn11_Info
             if (sse3Result.Success)
             {
                 Console.WriteLine($"sse3Result : {sse3Result.Result.Value}");
+                supportedFeatures.Add("sse3");
             }
 
             //8 SSE4.1
@@ -138,6 +143,7 @@ namespace WIn11_Info
             if (sse41Result.Success)
             {
                 Console.WriteLine($"sse41Result : {sse41Result.Result.Value}");
+                supportedFeatures.Add("sse4.1");
             }
 
             //9 SSE4.2
@@ -145,13 +151,30 @@ namespace WIn11_Info
             if (sse42Result.Success)
             {
                 Console.WriteLine($"sse42Result : {sse42Result.Result.Value}");
+                supportedFeatures.Add("sse4.2");
             }
 
             //10 EM64T
             var em64tResult = cpuid.Leafs.GetProperty(LeafProperty.ExtendedProcessorInfoAndFeatures.I64);
             if (em64tResult.Success)
             {
-                Console.WriteLine($"em64tResult : {em64tResult.Result.Value}"); // False
+                // here put asm
+                // Equivalent to: mov eax, 0x80000001; xor ecx, ecx; cpuid
+                var (eax, ebx, ecx, edx) = X86Base.CpuId(unchecked((int)0x80000001), 0);
+
+                // Test EDX bit 29: Long Mode (Intel 64 / EM64T / AMD64)
+                bool longMode = (edx & (1 << 29)) != 0;
+                if(longMode)
+                {
+                    supportedFeatures.Add("Intel64/EM64T");
+                }
+                Console.WriteLine($"EAX=0x{eax:X8} EBX=0x{ebx:X8} ECX=0x{ecx:X8} EDX=0x{edx:X8}");
+                Console.WriteLine($"Intel 64 / EM64T supported: {longMode}");
+
+                //
+
+
+                //Console.WriteLine($"em64tResult : {em64tResult.Result.Value}"); // False
                 var architecture = System.Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
                 Console.WriteLine($"ArchitectureL {architecture}"); // -> AMD64
             }
@@ -163,6 +186,7 @@ namespace WIn11_Info
             if (aesResult.Success)
             {
                 Console.WriteLine($"aesResult: {aesResult.Result.Value}");
+                supportedFeatures.Add("AES");
             }
 
             //12 AVX512 - we use "_F" since it: "expands most 32-bit and 64-bit based AVX instructions"
@@ -170,6 +194,7 @@ namespace WIn11_Info
             if (avx512Result.Success)
             {
                 Console.WriteLine($"avx512Result: {avx512Result.Result.Value}");
+                supportedFeatures.Add("avx512");
             }
 
             //13 FMA3/4
@@ -177,50 +202,22 @@ namespace WIn11_Info
             if (fmaResult.Success)
             {
                 Console.WriteLine($"fmaResult: {fmaResult.Result.Value}");
+                supportedFeatures.Add("fma");
             }
-            /*(
-             3. Family
-            var family = cpuid[Leafs.BasicInformation][0].GetProperty(Properties.Family).Value;
-            Console.WriteLine($"Family: {family}");
-
-            // 4. Model
-            var model = cpuid[Leafs.BasicInformation][0].GetProperty(Properties.Model).Value;
-            Console.WriteLine($"Model: {model}");
+            
 
             // 5. Stepping
-            var stepping = cpuid[Leafs.BasicInformation][0].GetProperty(Properties.SteppingId).Value;
+            var stepping = cpuid.Leafs.GetProperty(LeafProperty.SystemOnChipInformation.SteppingID); 
+                //cpuid[Leafs.BasicInformation][0].GetProperty(Properties.SteppingId).Value;
             Console.WriteLine($"Stepping: {stepping}");
 
-            // 6. Liczba rdzeni fizycznych
-            var physicalCores = cpuid[Leafs.ProcessorTopology][0].GetProperty(Properties.PhysicalCoresPerPackage).Value;
-            Console.WriteLine($"Fizyczne rdzenie: {physicalCores}");
 
-            // 7. Liczba wątków logicznych
-            var logicalCores = cpuid[Leafs.ProcessorTopology][0].GetProperty(Properties.LogicalCoresPerPackage).Value;
-            Console.WriteLine($"Logiczne wątki: {logicalCores}");
-
-            // 8–10. Cache L1, L2, L3
-            var l1 = cpuid[Leafs.CacheParameters]
-                .SelectMany(sl => sl)
-                .Where(sl => sl.GetProperty(Properties.CacheLevel).Value.ToString() == "1")
-                .Select(sl => sl.GetProperty(Properties.CacheSize).Value)
-                .FirstOrDefault();
-            Console.WriteLine($"Cache L1: {l1} KB");
-
-            var l2 = cpuid[Leafs.CacheParameters]
-                .SelectMany(sl => sl)
-                .Where(sl => sl.GetProperty(Properties.CacheLevel).Value.ToString() == "2")
-                .Select(sl => sl.GetProperty(Properties.CacheSize).Value)
-                .FirstOrDefault();
-            Console.WriteLine($"Cache L2: {l2} KB");
-
-            var l3 = cpuid[Leafs.CacheParameters]
-                .SelectMany(sl => sl)
-                .Where(sl => sl.GetProperty(Properties.CacheLevel).Value.ToString() == "3")
-                .Select(sl => sl.GetProperty(Properties.CacheSize).Value)
-                .FirstOrDefault();
-            Console.WriteLine($"Cache L3: {l3} KB");
-            */
+            
+            lblCPUName.Content+= Tools.getCpu();
+            foreach(string feature in supportedFeatures)
+            {
+                lblCPUName.Content += feature + "\n";
+            }
 
 
 
