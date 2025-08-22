@@ -72,7 +72,8 @@ namespace WIn11_Info
             InitializeComponent();
 
             /////////////
-            ConsoleAllocator.ShowConsoleWindow();
+            ///console for debugging
+            //ConsoleAllocator.ShowConsoleWindow();
             ///////////////
 
             List<string> supportedFeatures = new List<string>();
@@ -81,17 +82,17 @@ namespace WIn11_Info
 
             if (!cpuid.IsAvailable)
             {
-                Console.WriteLine("Instrukcja CPUID nie jest dostępna na tym procesorze.");
+                //Console.WriteLine("Instrukcja CPUID nie jest dostępna na tym procesorze.");
                 return;
             }
 
-            Console.WriteLine("=== Informacje o procesorze z CPUID ===");
+            //Console.WriteLine("=== Informacje o procesorze z CPUID ===");
 
             // 1. Vendor ID
             QueryPropertyResult manufacturerQueryResult = cpuid.Leafs.GetProperty(LeafProperty.BasicInformation.Manufacturer);
             if (manufacturerQueryResult.Success)
             {
-                Console.WriteLine($@" > Manufacturer: {manufacturerQueryResult.Result.Value}");
+                //Console.WriteLine($@" > Manufacturer: {manufacturerQueryResult.Result.Value}");
             }
 
             // 2. Full CPU Name (Brand tring)
@@ -100,20 +101,20 @@ namespace WIn11_Info
             var brandQuerryResult2 = cpuid.Leafs.GetProperty(LeafProperty.ProcessorBrandString2.ProcessorNameContinued);
             if (brandQuerryResult.Success && brandQuerryResult1.Success && brandQuerryResult2.Success)
             {
-                Console.WriteLine($"Brand String {brandQuerryResult.Result.Value}"+$"{brandQuerryResult1.Result.Value}"
-                    + $"{brandQuerryResult2.Result.Value}");
+                //Console.WriteLine($"Brand String {brandQuerryResult.Result.Value}"+$"{brandQuerryResult1.Result.Value}"
+                    //+ $"{brandQuerryResult2.Result.Value}");
             }
 
             // 3. Processor SerialNumber
             var processorSnResult=cpuid.Leafs.GetProperty(LeafProperty.ProcessorSerialNumber.SerialNumber);
             if(processorSnResult.Success)
             {
-                Console.WriteLine($"Processor SN: {processorSnResult.Result.Value}");
+                //Console.WriteLine($"Processor SN: {processorSnResult.Result.Value}");
             }
 
             // 4. Cores amount
             
-            Console.WriteLine($"Threads: {Environment.ProcessorCount}");
+            //Console.WriteLine($"Threads: {Environment.ProcessorCount}");
             
 
             //5 Cache Size
@@ -126,7 +127,7 @@ namespace WIn11_Info
             var lahfsahfResult = cpuid.Leafs.GetProperty(LeafProperty.ExtendedProcessorInfoAndFeatures.LAHF_SAHF);
             if (lahfsahfResult.Success)
             {
-                Console.WriteLine($"lahfsahfResult : {lahfsahfResult.Result.Value}");
+                //Console.WriteLine($"lahfsahfResult : {lahfsahfResult.Result.Value}");
                 supportedFeatures.Add("lahf/sahf");
             }
 
@@ -134,7 +135,7 @@ namespace WIn11_Info
             var sse3Result = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.SSE3);
             if (sse3Result.Success)
             {
-                Console.WriteLine($"sse3Result : {sse3Result.Result.Value}");
+                //Console.WriteLine($"sse3Result : {sse3Result.Result.Value}");
                 supportedFeatures.Add("sse3");
             }
 
@@ -142,7 +143,7 @@ namespace WIn11_Info
             var sse41Result = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.SSE41);
             if (sse41Result.Success)
             {
-                Console.WriteLine($"sse41Result : {sse41Result.Result.Value}");
+                //Console.WriteLine($"sse41Result : {sse41Result.Result.Value}");
                 supportedFeatures.Add("sse4.1");
             }
 
@@ -150,7 +151,7 @@ namespace WIn11_Info
             var sse42Result = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.SSE42);
             if (sse42Result.Success)
             {
-                Console.WriteLine($"sse42Result : {sse42Result.Result.Value}");
+                //Console.WriteLine($"sse42Result : {sse42Result.Result.Value}");
                 supportedFeatures.Add("sse4.2");
             }
 
@@ -168,15 +169,15 @@ namespace WIn11_Info
                 {
                     supportedFeatures.Add("Intel64/EM64T");
                 }
-                Console.WriteLine($"EAX=0x{eax:X8} EBX=0x{ebx:X8} ECX=0x{ecx:X8} EDX=0x{edx:X8}");
-                Console.WriteLine($"Intel 64 / EM64T supported: {longMode}");
+                //Console.WriteLine($"EAX=0x{eax:X8} EBX=0x{ebx:X8} ECX=0x{ecx:X8} EDX=0x{edx:X8}");
+                //Console.WriteLine($"Intel 64 / EM64T supported: {longMode}");
 
                 //
 
 
-                //Console.WriteLine($"em64tResult : {em64tResult.Result.Value}"); // False
+                ////Console.WriteLine($"em64tResult : {em64tResult.Result.Value}"); // False
                 var architecture = System.Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
-                Console.WriteLine($"ArchitectureL {architecture}"); // -> AMD64
+                //Console.WriteLine($"ArchitectureL {architecture}"); // -> AMD64
             }
 
             
@@ -185,7 +186,7 @@ namespace WIn11_Info
             var aesResult =cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.AES);
             if (aesResult.Success)
             {
-                Console.WriteLine($"aesResult: {aesResult.Result.Value}");
+                //Console.WriteLine($"aesResult: {aesResult.Result.Value}");
                 supportedFeatures.Add("AES");
             }
 
@@ -193,7 +194,7 @@ namespace WIn11_Info
             var avx512Result = cpuid.Leafs.GetProperty(LeafProperty.ExtendedFeatures.AVX512_F);
             if (avx512Result.Success)
             {
-                Console.WriteLine($"avx512Result: {avx512Result.Result.Value}");
+                //Console.WriteLine($"avx512Result: {avx512Result.Result.Value}");
                 supportedFeatures.Add("avx512");
             }
 
@@ -201,7 +202,7 @@ namespace WIn11_Info
             var fmaResult = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.FMA);
             if (fmaResult.Success)
             {
-                Console.WriteLine($"fmaResult: {fmaResult.Result.Value}");
+                //Console.WriteLine($"fmaResult: {fmaResult.Result.Value}");
                 supportedFeatures.Add("fma");
             }
             
@@ -209,14 +210,18 @@ namespace WIn11_Info
             // 5. Stepping
             var stepping = cpuid.Leafs.GetProperty(LeafProperty.SystemOnChipInformation.SteppingID); 
                 //cpuid[Leafs.BasicInformation][0].GetProperty(Properties.SteppingId).Value;
-            Console.WriteLine($"Stepping: {stepping}");
+            //Console.WriteLine($"Stepping: {stepping}");
 
+            this.SizeToContent = SizeToContent.WidthAndHeight;
 
-            
-            lblCPUName.Content+= Tools.getCpu();
+            lblCPUName.Content+= Tools.getCpu()+"\n";
+            lblCPUName.Content += "Supported features:\n";
+            double startHeight=lblCPUName.Height;
             foreach(string feature in supportedFeatures)
             {
-                lblCPUName.Content += feature + "\n";
+                lblCPUName.Content += "   - "+feature + "\n";
+                lblCPUName.Height = lblCPUName.Height + startHeight;
+               // this.Height = this.Height + startHeight;
             }
 
 

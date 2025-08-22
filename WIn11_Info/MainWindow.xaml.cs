@@ -314,6 +314,7 @@ namespace WIn11_Info
             btnShowSN_Click(sender, e);
             btnShowCPU_Click(sender, e);
             btnShowHostName_Click(sender, e);
+            btnShowNetwork_Click(sender,e);
             //btnShowIP_Click(sender, e);
             //btnShowLAN_Click(sender, e);
             //btnShowWLAN_Click(sender, e);
