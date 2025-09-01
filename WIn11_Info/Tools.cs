@@ -1,5 +1,7 @@
 ﻿// For saving to csv
 using CsvHelper;
+using iTin.Hardware.Specification;
+using iTin.Hardware.Specification.Cpuid;
 using Microsoft.Win32;
 // For saving to sql database
 using System.Data.SqlClient;
@@ -11,7 +13,7 @@ using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Numerics;
+using System.Runtime.Intrinsics.X86;
 using System.Text.RegularExpressions;
 using System.Windows;
 // For saving to xml
@@ -55,7 +57,7 @@ namespace WIn11_Info
     {
         public static String GetLocalIPAddress()
         {
-            
+
             string localIP;
             using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
             {
@@ -88,6 +90,94 @@ namespace WIn11_Info
             return "0";
         }
 
+        public static List<string> getAdvancedCpuFeatures()
+        {
+            List<String> features = new List<String>();
+            var cpuid = CPUID.Instance;
+
+
+            if (!cpuid.IsAvailable)
+            {
+                //Console.WriteLine("Instrukcja CPUID nie jest dostępna na tym procesorze.");
+                return [];
+            }
+
+
+            //1 lahf/sahf
+            var lahfsahfResult = cpuid.Leafs.GetProperty(LeafProperty.ExtendedProcessorInfoAndFeatures.LAHF_SAHF);
+            if (lahfsahfResult.Success)
+            {
+                //Console.WriteLine($"lahfsahfResult : {lahfsahfResult.Result.Value}");
+                features.Add("LAHF_SAHF");
+            }
+
+            //2 SSE3
+            var sse3Result = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.SSE3);
+            if (sse3Result.Success)
+            {
+                //Console.WriteLine($"sse3Result : {sse3Result.Result.Value}");
+                features.Add("sse3");
+            }
+
+            //3 SSE4_1
+            var sse41Result = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.SSE41);
+            if (sse41Result.Success)
+            {
+                features.Add("SSE4_1");
+            }
+
+            //4 SSE4_1
+            var sse42Result = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.SSE42);
+            if (sse42Result.Success)
+            {
+                features.Add("SSE4_1");
+            }
+
+            //5 EM64T
+            var em64tResult = cpuid.Leafs.GetProperty(LeafProperty.ExtendedProcessorInfoAndFeatures.I64);
+            if (em64tResult.Success)
+            {
+                // Equivalent to: mov eax, 0x80000001; xor ecx, ecx; cpuid
+                var (eax, ebx, ecx, edx) = X86Base.CpuId(unchecked((int)0x80000001), 0);
+
+                // Test EDX bit 29: Long Mode (Intel 64 / EM64T / AMD64)
+                bool longMode = (edx & (1 << 29)) != 0;
+                if (longMode)
+                {
+                    features.Add("Intel64_EM64T");
+                }
+            }
+
+
+
+            //6 AES
+            var aesResult = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.AES);
+            if (aesResult.Success)
+            {
+                //Console.WriteLine($"aesResult: {aesResult.Result.Value}");
+                features.Add("AES");
+            }
+
+            //7 AVX512 - we use "_F" since it: "expands most 32-bit and 64-bit based AVX instructions"
+            var avx512Result = cpuid.Leafs.GetProperty(LeafProperty.ExtendedFeatures.AVX512_F);
+            if (avx512Result.Success)
+            {
+                //Console.WriteLine($"avx512Result: {avx512Result.Result.Value}");
+                features.Add("avx512");
+            }
+
+            //8 FMA3/4
+            var fmaResult = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.FMA);
+            if (fmaResult.Success)
+            {
+                //Console.WriteLine($"fmaResult: {fmaResult.Result.Value}");
+                features.Add("fma");
+            }
+
+
+            return features;
+        }
+
         public static void showCpu()
         {
 
@@ -98,18 +188,6 @@ namespace WIn11_Info
             {
                 return;
             }
-
-            /*
-            String cpu = "";
-            ManagementObjectSearcher searcher =
-                new ManagementObjectSearcher("SELECT Name from Win32_Processor");
-            foreach (ManagementObject obj in searcher.Get())
-            {
-                cpu += obj["Name"];
-            }
-
-            return cpu;
-            */
         }
 
         public static String getCpu()
@@ -174,7 +252,7 @@ namespace WIn11_Info
             string domainName = "";
             string domainUser = "";
             string domainPassword = "";
-            domainCredentials credentialsForm=new domainCredentials();
+            domainCredentials credentialsForm = new domainCredentials();
             credentialsForm.ShowDialog();
 
             if (credentialsForm.IsActive == false)
@@ -218,11 +296,12 @@ namespace WIn11_Info
 
                 process.WaitForExit();
 
-                
+
                 // print the status of command
-                if (process.ExitCode != 0) {
+                if (process.ExitCode != 0)
+                {
                     MessageBox.Show("Exit code = " + process.ExitCode + "\n" +
-                        "error " + error+"\n"+"Output "+output);
+                        "error " + error + "\n" + "Output " + output);
 
                 }
                 else
@@ -233,7 +312,7 @@ namespace WIn11_Info
                         Process.Start("ShutDown", "/r");
                     }
                 }
-                
+
 
             }
             return true;
@@ -243,7 +322,7 @@ namespace WIn11_Info
         {
             // Rule 1: Not null or empty
             if (string.IsNullOrWhiteSpace(name))
-            { 
+            {
                 return 1;
             }
             // Rule 2: Max 15 characters
@@ -308,7 +387,7 @@ namespace WIn11_Info
             return drive_info;
         }
 
-        public static int exportToCsv(String NR="",String ID="")
+        public static int exportToCsv(String NR = "", String ID = "")
         {
             String Sn = GetLocalSN();
             String Ip = GetLocalIPAddress();
@@ -345,7 +424,7 @@ namespace WIn11_Info
             return 1;
         }
 
-        public static int exportToXml(String NR="", String ID="")
+        public static int exportToXml(String NR = "", String ID = "")
         {
 
             String Sn = GetLocalSN();
@@ -363,23 +442,23 @@ namespace WIn11_Info
             {
                 ComputerUnit unit = new ComputerUnit(Sn, Ip, MacLan, MacWlan, Cpu, HostName, HardDisk, Ram, Nr, Id);
                 String fileName = HostName + "_Report.xml";
-                
+
                 XDocument doc = new XDocument(
                     new XElement("Computer",
-                        new XElement("HostName",HostName),
-                        new XElement("SN",Sn),
-                        new XElement("IP",Ip),
-                        new XElement("MacLan",MacLan),
-                        new XElement("MacWlan",MacWlan),
-                        new XElement("Cpu",Cpu),
-                        new XElement("Ram",Ram),
-                        new XElement("HardDisk",HardDisk),
-                        new XElement("Nr",Nr),
-                        new XElement("ID",Id)
+                        new XElement("HostName", HostName),
+                        new XElement("SN", Sn),
+                        new XElement("IP", Ip),
+                        new XElement("MacLan", MacLan),
+                        new XElement("MacWlan", MacWlan),
+                        new XElement("Cpu", Cpu),
+                        new XElement("Ram", Ram),
+                        new XElement("HardDisk", HardDisk),
+                        new XElement("Nr", Nr),
+                        new XElement("ID", Id)
                     )
                 );
 
-                doc.Save( fileName );
+                doc.Save(fileName);
                 MessageBox.Show("Saved to: " + fileName);
 
 
@@ -407,7 +486,7 @@ namespace WIn11_Info
                 password = passwordForm.passwdBoxPassword.Password;
             }
 
-            if(password!="")
+            if (password != "")
             {
 
                 // Set password
@@ -417,7 +496,7 @@ namespace WIn11_Info
                 RunCommand($"net user {userName} /active:yes");
 
                 Console.WriteLine("Administrator account updated.");
-            
+
 
                 static void RunCommand(string command)
                 {
@@ -436,7 +515,7 @@ namespace WIn11_Info
                         Console.WriteLine(output);
                     }
                 }
-        }
+            }
             return true;
         }
 
@@ -451,10 +530,10 @@ namespace WIn11_Info
             if (userForm.IsActive == false)
             {
                 if (userForm.lastUserSuccess == false) { return; }
-                userName=userForm.txtBoxUserName.Text;
-                domainName=userForm.txtBoxDomainName.Text;
+                userName = userForm.txtBoxUserName.Text;
+                domainName = userForm.txtBoxDomainName.Text;
             }
-            if(userName!="" && domainName!="")
+            if (userName != "" && domainName != "")
             {
                 const string registryEntry = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Authentication\\LogonUI\\";
                 string onDisplayKey = "LastLoggedOnDisplayName";
@@ -462,9 +541,9 @@ namespace WIn11_Info
                 string onUserKey = "LastLoggedOnUser";
 
 
-                Registry.SetValue(registryEntry , onDisplayKey, userName);
-                Registry.SetValue(registryEntry , onSamUserKey, domainName+"\\"+userName);
-                Registry.SetValue(registryEntry , onUserKey, domainName + "\\" + userName);
+                Registry.SetValue(registryEntry, onDisplayKey, userName);
+                Registry.SetValue(registryEntry, onSamUserKey, domainName + "\\" + userName);
+                Registry.SetValue(registryEntry, onUserKey, domainName + "\\" + userName);
 
                 MessageBox.Show("Successfully set last user.");
 
@@ -487,16 +566,19 @@ namespace WIn11_Info
 
             using var connection = new SqlConnection(masterConnStr);
             using var command = new SqlCommand(checkDbSql, connection);
-            connection.Open(); 
+            connection.Open();
             command.ExecuteNonQuery();
         }
 
 
-        static void ensureTableExists(string dbConnStr,string tabName)
+        static void ensureTableExists(string dbConnStr, string tabName)
         {
-            string createTableSql = $@"
-IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabName}') BEGIN
-                CREATE TABLE PCs (
+            string createTableSql = "";
+
+
+            createTableSql = $@"
+                IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabName}') BEGIN
+                CREATE TABLE {tabName} (
                     ID INT IDENTITY PRIMARY KEY,
                      Sn NVARCHAR(30),
                      Ip NVARCHAR(15),
@@ -507,9 +589,19 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabN
                      HardDisk NVARCHAR(100),
                      Ram NVARCHAR(100),
                      Nr NVARCHAR(10),
-                     Id_Number NVARCHAR(20)
+                     Id_Number NVARCHAR(20),
+                        LAHF_SAHF NVARCHAR(20),
+                        SSE3 NVARCHAR(20),
+                        SSE4_1 NVARCHAR(20),
+                        SSE4_2 NVARCHAR(20),
+                        EM64T NVARCHAR(20),
+                        AES NVARCHAR(20),
+                        AVX512 NVARCHAR(20),
+                        FMA3_4 NVARCHAR(20)
                 )
             END";
+
+
 
             using var connection = new SqlConnection(dbConnStr);
             using var command = new SqlCommand(createTableSql, connection);
@@ -517,7 +609,7 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabN
             command.ExecuteNonQuery();
         }
 
-        static bool isInDatabase(string dbConnStr, string tabName,string sn="", string NR = "000000", string Id_Numberd = "000000")
+        static bool isInDatabase(string dbConnStr, string tabName, string sn = "", string NR = "000000", string Id_Numberd = "000000")
         {
             string result = "";
             string selectSql = $"SELECT * FROM {tabName} WHERE Sn = '{sn}' ";
@@ -528,26 +620,28 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabN
 
                 using (var reader = command.ExecuteReader())
                 {
-                    if(reader.Read())
+                    if (reader.Read())
                     {
                         MessageBox.Show($"PC: {sn} is already in database");
                         return true;
                     }
                 }
             }
-                
+
 
             return false;
         }
 
-            static void insertPC(string dbConnStr, string tabName, string NR="000000", string Id_Numberd="000000")
+        static void insertPC(string dbConnStr, string tabName, string NR = "000000", string Id_Numberd = "000000", List<string> features = null)
         {
 
 
 
-            string insertSql = $"INSERT INTO {tabName} "+
-                @"(Sn, Ip,MacLan,MacWlan ,Cpu ,HostName ,HardDisk ,Ram ,Nr ,Id_Number) 
-    VALUES (@Sn, @Ip,@MacLan,@MacWlan ,@Cpu ,@HostName ,@HardDisk ,@Ram ,@Nr ,@Id_Number)";
+            string insertSql = $"INSERT INTO {tabName} " +
+                @"(Sn, Ip,MacLan,MacWlan ,Cpu ,HostName ,HardDisk ,Ram ,Nr ,Id_Number,
+lahf_sahf,SSE3,SSE4_1 ,SSE4_2,EM64T,AES,AVX512,FMA3_4) 
+    VALUES (@Sn, @Ip,@MacLan,@MacWlan ,@Cpu ,@HostName ,@HardDisk ,@Ram ,@Nr ,@Id_Number,
+@lahf_sahf,@SSE3,@SSE4_1 ,@SSE4_2,@EM64T,@AES,@AVX512,@FMA3_4)";
 
             using var connection = new SqlConnection(dbConnStr);
             using var command = new SqlCommand(insertSql, connection);
@@ -564,6 +658,28 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabN
             String IdNumber = Id_Numberd;//
 
 
+            String lahf_sahf = "";
+            String SSE3 = "";
+            String SSE4_1 = "";
+            String SSE4_2 = "";
+            String EM64T = "";
+            String AES = "";
+            String AVX512 = "";
+            String FMA3_4 = "";
+            if (features.Count > 6)
+            {
+                lahf_sahf = features[0];
+                SSE3 = features[1];
+                SSE4_1 = features[2];
+                SSE4_2 = features[3];
+                EM64T = features[4];
+                AES = features[5];
+                AVX512 = features[6];
+                FMA3_4 = features[7];
+            }
+
+
+
             command.Parameters.AddWithValue("@Sn", Sn);
             command.Parameters.AddWithValue("@Ip", Ip);
             command.Parameters.AddWithValue("@MacLan", MacLan);
@@ -574,23 +690,32 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabN
             command.Parameters.AddWithValue("@Nr", Nr);
             command.Parameters.AddWithValue("@Id_Number", IdNumber);
             command.Parameters.AddWithValue("@Cpu", Cpu);
+            command.Parameters.AddWithValue("@lahf_sahf", lahf_sahf);
+            command.Parameters.AddWithValue("@SSE3", SSE3);
+            command.Parameters.AddWithValue("@SSE4_1", SSE4_1);
+            command.Parameters.AddWithValue("@SSE4_2", SSE4_2);
+            command.Parameters.AddWithValue("@EM64T", EM64T);
+            command.Parameters.AddWithValue("@AES", AES);
+            command.Parameters.AddWithValue("@AVX512", AVX512);
+            command.Parameters.AddWithValue("@FMA3_4", FMA3_4);
+
             connection.Open();
 
             int insertResult = command.ExecuteNonQuery();
-            if (insertResult==1)
+            if (insertResult == 1)
             {
-                MessageBox.Show("User inserted successfully.");
+                MessageBox.Show("PC inserted successfully.");
             }
             else
             {
                 MessageBox.Show($"Affected: {insertResult} rows.");
             }
 
-            
+
         }
 
 
-        public static void saveToDatabase(String SN="",String NR = "", String ID = "")
+        public static void saveToDatabase(String SN = "", String NR = "", String ID = "")
         {
 
             string server = "localhost\\SQLEXPRESS01"; // or  SQL Server name
@@ -603,14 +728,18 @@ IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tabN
             string appConnectionString = $"Server={server};Database={dbName};Integrated Security=true;";
 
             ensureDataBaseExists(masterConnectionString, dbName);
-            ensureTableExists(appConnectionString,tabName);
-            if(isInDatabase(appConnectionString, tabName, SN, NR, ID)==false)
-            {
-                insertPC(appConnectionString,tabName,NR,ID);
-            }
-            
+            ensureTableExists(appConnectionString, tabName);
 
-            
+
+            if (isInDatabase(appConnectionString, tabName, SN, NR, ID) == false)
+            {
+                insertPC(appConnectionString, tabName, NR, ID, getAdvancedCpuFeatures());
+
+            }
+
+
+
+
 
         }
 
