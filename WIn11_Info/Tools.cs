@@ -334,7 +334,7 @@ namespace WIn11_Info
                     csv.NextRecord(); // Ensure newline
                 }
 
-
+                MessageBox.Show("Saved to: " + fileName);
             }
             else
             {//can't create file - invalid name
