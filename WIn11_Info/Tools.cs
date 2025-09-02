@@ -3,6 +3,8 @@ using CsvHelper;
 using iTin.Hardware.Specification;
 using iTin.Hardware.Specification.Cpuid;
 using Microsoft.Win32;
+//For reading from JSON
+using Newtonsoft.Json;
 // For saving to sql database
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -53,6 +55,19 @@ public class ComputerUnit
 
 namespace WIn11_Info
 {
+
+    public class DbSettings
+    {
+        public string ServerName { get; set; }
+
+        public string TableName { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public string DatabaseName { get; set; }
+
+    }
+
+
     internal class Tools
     {
         public static String GetLocalIPAddress()
@@ -714,15 +729,44 @@ lahf_sahf,SSE3,SSE4_1 ,SSE4_2,EM64T,AES,AVX512,FMA3_4)
 
         }
 
+        public static void loadDataBaseConf(string filePath, ref string server, ref string dbName, ref string tabName, ref string userName, ref string password)
+        {
+            if (File.Exists(filePath))
+            {
+                var json = File.ReadAllText(filePath);
+                var settings = JsonConvert.DeserializeObject<DbSettings>(json);
 
+                if (settings != null)
+                {
+                    server = settings.ServerName;
+                    dbName = settings.DatabaseName;
+                    tabName = settings.TableName;
+                    userName = settings.UserName;
+                    password = settings.Password;
+
+                }
+                else
+                {
+                    MessageBox.Show($"Can't read data from: {filePath}");
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Can't find: {filePath}");
+            }
+
+
+
+        }
         public static void saveToDatabase(String SN = "", String NR = "", String ID = "")
         {
-
-            string server = "localhost\\SQLEXPRESS01"; // or  SQL Server name
-            string userName = "UserName";
-            string Password = "Password";
-            string dbName = "master";
-            string tabName = "PCs";
+            string filePath = "dbSettings.json";
+            string server = ""; // or  SQL Server name
+            string userName = "";
+            string password = "";
+            string dbName = "";
+            string tabName = "";
+            loadDataBaseConf(filePath, ref server, ref dbName, ref tabName, ref userName, ref password);
             //"Server=localhost\\SQLEXPRESS01;Database=master;Trusted_Connection=True;"
             string masterConnectionString = $"Server={server};Database=master;Integrated Security=true;";
             string appConnectionString = $"Server={server};Database={dbName};Integrated Security=true;";
