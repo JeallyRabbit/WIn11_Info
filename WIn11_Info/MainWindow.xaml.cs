@@ -1,14 +1,6 @@
-﻿using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Threading;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace WIn11_Info
 {
@@ -28,16 +20,16 @@ namespace WIn11_Info
             InitializeComponent();
             btnSetHostName.IsEnabled = false;
             lblDhcpRecord1.IsEnabled = false;
-            btnDhcpRecord1.IsEnabled= false;
+            btnDhcpRecord1.IsEnabled = false;
             lblDhcpRecord2.IsEnabled = false;
-            btnDhcpRecord2.IsEnabled= false;
+            btnDhcpRecord2.IsEnabled = false;
 
         }
 
         private void btnShowSN_Click(object sender, RoutedEventArgs e)
         {
-            String sn=Tools.GetLocalSN();
-            if(sn != "1")
+            String sn = Tools.GetLocalSN();
+            if (sn != "1")
             {
                 btnShowSN.Content = "SN: " + sn;
             }
@@ -59,7 +51,7 @@ namespace WIn11_Info
 
         private void btnShowHostName_Click(object sender, RoutedEventArgs e)
         {
-            btnShowHostName.Content=System.Net.Dns.GetHostName();
+            btnShowHostName.Content = System.Net.Dns.GetHostName();
         }
 
         /*
@@ -113,7 +105,8 @@ namespace WIn11_Info
             {
                 //btnShowLAN_Click(sender, e);
                 //btnShowWLAN_Click(sender, e);
-                if (lanReadingSuccess)
+                btnShowNetwork_Click(sender, e);
+                if (lanReadingSuccess || true)
                 {
                     lblDhcpRecord1.IsEnabled = true;
                     btnDhcpRecord1.IsEnabled = true;
@@ -126,25 +119,25 @@ namespace WIn11_Info
                         Tools.GetLocalMac_Lan() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
                 }
 
-                if(wlanReadingSuccess)
+                if (wlanReadingSuccess || true)
                 {
                     lblDhcpRecord2.IsEnabled = true;
                     btnDhcpRecord2.IsEnabled = true;
-                    dhcpRecord2= "host " + System.Net.Dns.GetHostName().ToString() + "_WLAN { hardware ethernet " +
+                    dhcpRecord2 = "host " + System.Net.Dns.GetHostName().ToString() + "_WLAN { hardware ethernet " +
                         Tools.GetLocalMac_Wlan() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
 
                     //Difference in double underscore for label element
                     lblDhcpRecord2.Content = "host " + System.Net.Dns.GetHostName().ToString() + "__WLAN { hardware ethernet " +
                         Tools.GetLocalMac_Wlan() + "; fixed-address " + txtBoxDhcpRecord.Text.ToString() + ";}\n";
                 }
-                
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
 
-            
+
         }
 
         private void btnSetHostName_Click(object sender, RoutedEventArgs e)
@@ -154,9 +147,9 @@ namespace WIn11_Info
 
         private void txtBoxHostName_GotFocus(object sender, RoutedEventArgs e)
         {
-            if(txtBoxHostName.Text=="HostName")
+            if (txtBoxHostName.Text == "HostName")
             {
-                txtBoxHostName.Text=String.Empty;
+                txtBoxHostName.Text = String.Empty;
                 txtBoxHostName.FontWeight = FontWeights.Normal; txtBoxHostName.Focus();
             }
         }
@@ -172,33 +165,33 @@ namespace WIn11_Info
         {
             if (e.Key == Key.Enter)
             {
-                btnSetHostName_Click(sender,e);
+                btnSetHostName_Click(sender, e);
             }
         }
 
         private void txtBoxHostName_TextChanged(object sender, TextChangedEventArgs e)
         {
-            
-            int validate=Tools.ValidateNetbiosName(txtBoxHostName.Text);
+
+            int validate = Tools.ValidateNetbiosName(txtBoxHostName.Text);
             btnSetHostName.IsEnabled = false;
-            if(validate == 0)
+            if (validate == 0)
             {
                 btnSetHostName.IsEnabled = true;
-                if(ErrorPopup!=null)
+                if (ErrorPopup != null)
                 {
                     ErrorPopup.IsOpen = false;
                 }
             }
-            else if(validate == 1)
+            else if (validate == 1)
             {
-                if(PopupText!=null && ErrorPopup!=null)
+                if (PopupText != null && ErrorPopup != null)
                 {
                     PopupText.Text = "HostName can't be empty.";
                     ErrorPopup.IsOpen = true;
                 }
-                
+
             }
-            else if(validate == 2)
+            else if (validate == 2)
             {
                 if (PopupText != null && ErrorPopup != null)
                 {
@@ -243,7 +236,7 @@ namespace WIn11_Info
 
         private void btnDhcpRecord1_Click(object sender, RoutedEventArgs e)
         {
-            if(lblDhcpRecord1.IsVisible)
+            if (lblDhcpRecord1.IsVisible)
             {
                 Clipboard.SetDataObject(dhcpRecord1);
             }
@@ -314,7 +307,7 @@ namespace WIn11_Info
             btnShowSN_Click(sender, e);
             btnShowCPU_Click(sender, e);
             btnShowHostName_Click(sender, e);
-            btnShowNetwork_Click(sender,e);
+            btnShowNetwork_Click(sender, e);
             //btnShowIP_Click(sender, e);
             //btnShowLAN_Click(sender, e);
             //btnShowWLAN_Click(sender, e);
@@ -334,7 +327,7 @@ namespace WIn11_Info
 
         private void btnSaveToDatabase_Click(object sender, RoutedEventArgs e)
         {
-            Tools.saveToDatabase(Tools.GetLocalSN(),txtBoxNrInw.Text.ToString(),txtBoxId.Text.ToString());
+            Tools.saveToDatabase(Tools.GetLocalSN(), txtBoxNrInw.Text.ToString(), txtBoxId.Text.ToString());
         }
 
 
