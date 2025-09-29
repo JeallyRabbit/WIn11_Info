@@ -73,12 +73,20 @@ namespace WIn11_Info
         public static String GetLocalIPAddress()
         {
 
-            string localIP;
+            string localIP = "0.0.0.0";
             using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
             {
-                socket.Connect("8.8.8.8", 65530);
-                IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
-                localIP = endPoint.Address.ToString();
+                try
+                {
+                    socket.Connect("8.8.8.8", 65530);
+                    IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+                    localIP = endPoint.Address.ToString();
+                }
+                catch (System.Net.Sockets.SocketException ex)
+                {
+                    //MessageBox.Show("Not Connected to any network");
+                    return "0.0.0.0";
+                }
             }
             return localIP;
         }
@@ -249,17 +257,23 @@ namespace WIn11_Info
 
             foreach (ManagementObject adapter in adapters)
             {
-                /*
-                MessageBox.Show("Nazwa: " + adapter["Name"] + " Typ interfejsu: " + adapter["AdapterType"]
-                    + " Status: " + adapter["NetConnectionStatus"] + " MAC: " + adapter["MACAddress"]);
-                */
-                if (adapter["Name"].ToString().Contains("Wi-Fi") &&
-                    (adapter["AdapterType"].ToString().Contains("802.3")) || adapter["AdapterType"].ToString().Contains("802.11"))
+
+                try
                 {
-                    return adapter["MACAddress"].ToString();
+                    if (adapter["Name"].ToString().Contains("Wi-Fi") &&
+                    (adapter["AdapterType"].ToString().Contains("802.3")) || adapter["AdapterType"].ToString().Contains("802.11"))
+                    {
+
+                        return adapter["MACAddress"].ToString();
+                    }
                 }
+                catch (Exception ex)
+                {
+                    continue;
+                }
+
             }
-            return "0";
+            return "";
         }
 
         public static bool setLocalHostName(string newName)
