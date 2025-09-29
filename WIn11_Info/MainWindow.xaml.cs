@@ -34,18 +34,9 @@ namespace WIn11_Info
                 btnShowSN.Content = "SN: " + sn;
             }
         }
-        /*
-        private void btnShowIP_Click(object sender, RoutedEventArgs e)
-        {
-            String ip=Tools.GetLocalIPAddress();
-            btnShowIP.Content = ip;
-        }
-        */
 
         private void btnShowCPU_Click(object sender, RoutedEventArgs e)
         {
-            //String cpu=Tools.getCpu();
-            //txtBlockCpu.Text = cpu;
             Tools.showCpu();
         }
 
@@ -54,57 +45,12 @@ namespace WIn11_Info
             btnShowHostName.Content = System.Net.Dns.GetHostName();
         }
 
-        /*
-        private void btnShowLAN_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                String lan = Tools.GetLocalMac_Lan();
-                if (lan != "")
-                {
-                    btnShowLAN.Content = "LAN: "+lan;
-                    lanReadingSuccess = true;
-                }
-                else
-                {
-                    MessageBox.Show("Error reading MAC address");
 
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            
-        }
-        */
-
-        /*
-        private void btnShowWLAN_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                String mac=Tools.GetLocalMac_Wlan();
-                if(mac!="0")
-                {
-                    btnShowWLAN.Content = "WLAN: "+mac;
-                    wlanReadingSuccess = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            
-        }
-        */
 
         private void btnDhcpRecord_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                //btnShowLAN_Click(sender, e);
-                //btnShowWLAN_Click(sender, e);
                 btnShowNetwork_Click(sender, e);
                 if (lanReadingSuccess || true)
                 {
@@ -154,12 +100,6 @@ namespace WIn11_Info
             }
         }
 
-        /*
-        private void txtBoxHostNameKeyDown(object sender, KeyEventArgs e)
-        {
-
-        }
-        */
 
         private void txtBoxHostNameKey_Down(object sender, KeyEventArgs e)
         {
@@ -308,9 +248,6 @@ namespace WIn11_Info
             btnShowCPU_Click(sender, e);
             btnShowHostName_Click(sender, e);
             btnShowNetwork_Click(sender, e);
-            //btnShowIP_Click(sender, e);
-            //btnShowLAN_Click(sender, e);
-            //btnShowWLAN_Click(sender, e);
             btnShowRam_Click(sender, e);
             btnShowDisk_Click(sender, e);
         }

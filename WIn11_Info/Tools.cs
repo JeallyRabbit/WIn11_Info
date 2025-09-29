@@ -84,7 +84,6 @@ namespace WIn11_Info
                 }
                 catch (System.Net.Sockets.SocketException ex)
                 {
-                    //MessageBox.Show("Not Connected to any network");
                     return "0.0.0.0";
                 }
             }
@@ -113,6 +112,7 @@ namespace WIn11_Info
             return "0";
         }
 
+
         public static List<string> getAdvancedCpuFeatures()
         {
             List<String> features = new List<String>();
@@ -121,7 +121,6 @@ namespace WIn11_Info
 
             if (!cpuid.IsAvailable)
             {
-                //Console.WriteLine("Instrukcja CPUID nie jest dostępna na tym procesorze.");
                 return [];
             }
 
@@ -177,7 +176,6 @@ namespace WIn11_Info
             var aesResult = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.AES);
             if (aesResult.Success)
             {
-                //Console.WriteLine($"aesResult: {aesResult.Result.Value}");
                 features.Add("AES");
             }
 
@@ -185,7 +183,6 @@ namespace WIn11_Info
             var avx512Result = cpuid.Leafs.GetProperty(LeafProperty.ExtendedFeatures.AVX512_F);
             if (avx512Result.Success)
             {
-                //Console.WriteLine($"avx512Result: {avx512Result.Result.Value}");
                 features.Add("avx512");
             }
 
@@ -193,7 +190,6 @@ namespace WIn11_Info
             var fmaResult = cpuid.Leafs.GetProperty(LeafProperty.ProcessorInfoAndFeatures.Features.FMA);
             if (fmaResult.Success)
             {
-                //Console.WriteLine($"fmaResult: {fmaResult.Result.Value}");
                 features.Add("fma");
             }
 
@@ -260,11 +256,18 @@ namespace WIn11_Info
 
                 try
                 {
-                    if (adapter["Name"].ToString().Contains("Wi-Fi") &&
-                    (adapter["AdapterType"].ToString().Contains("802.3")) || adapter["AdapterType"].ToString().Contains("802.11"))
+                    if (adapter["Name"] != null && adapter["AdapterType"] != null)
                     {
+                        if (adapter["Name"].ToString().Contains("Wi-Fi") &&
+                        (adapter["AdapterType"].ToString().Contains("802.3")) || adapter["AdapterType"].ToString().Contains("802.11"))
+                        {
 
-                        return adapter["MACAddress"].ToString();
+                            return adapter["MACAddress"].ToString();
+                        }
+                    }
+                    else
+                    {
+                        continue;
                     }
                 }
                 catch (Exception ex)
@@ -319,7 +322,7 @@ namespace WIn11_Info
 
                 process.Start();
 
-                // Read the output (optional)
+                // Read the output
                 string output = process.StandardOutput.ReadToEnd();
                 string error = process.StandardError.ReadToEnd();
 
@@ -488,13 +491,13 @@ namespace WIn11_Info
                 );
 
                 doc.Save(fileName);
-                MessageBox.Show("Saved to: " + fileName);
+                MessageBox.Show($"Saved to: {fileName}");
 
 
             }
             else
             {//can't create file - invalid name
-                MessageBox.Show("Can't create report - invalid name (hostName)");
+                MessageBox.Show("Can't create report - invalid name (hostname)");
             }
 
 
@@ -675,16 +678,16 @@ lahf_sahf,SSE3,SSE4_1 ,SSE4_2,EM64T,AES,AVX512,FMA3_4)
             using var connection = new SqlConnection(dbConnStr);
             using var command = new SqlCommand(insertSql, connection);
 
-            String Sn = GetLocalSN();//
-            String Ip = GetLocalIPAddress();//
-            String MacLan = GetLocalMac_Lan();//
-            String MacWlan = GetLocalMac_Wlan();//
-            String Cpu = getCpu();//
-            String HostName = System.Net.Dns.GetHostName();//
+            String Sn = GetLocalSN();
+            String Ip = GetLocalIPAddress();
+            String MacLan = GetLocalMac_Lan();
+            String MacWlan = GetLocalMac_Wlan();
+            String Cpu = getCpu();
+            String HostName = System.Net.Dns.GetHostName();
             String HardDisk = getLocalDisk();
-            String Ram = getRAM();//
-            String Nr = NR;//
-            String IdNumber = Id_Numberd;//
+            String Ram = getRAM();
+            String Nr = NR;
+            String IdNumber = Id_Numberd;
 
 
             String lahf_sahf = "";
@@ -775,13 +778,12 @@ lahf_sahf,SSE3,SSE4_1 ,SSE4_2,EM64T,AES,AVX512,FMA3_4)
         public static void saveToDatabase(String SN = "", String NR = "", String ID = "")
         {
             string filePath = "dbSettings.json";
-            string server = ""; // or  SQL Server name
+            string server = "";
             string userName = "";
             string password = "";
             string dbName = "";
             string tabName = "";
             loadDataBaseConf(filePath, ref server, ref dbName, ref tabName, ref userName, ref password);
-            //"Server=localhost\\SQLEXPRESS01;Database=master;Trusted_Connection=True;"
             string masterConnectionString = $"Server={server};Database=master;Integrated Security=true;";
             string appConnectionString = $"Server={server};Database={dbName};Integrated Security=true;";
 
