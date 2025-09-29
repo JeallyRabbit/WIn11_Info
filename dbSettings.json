@@ -1,0 +1,7 @@
+{
+  "ServerName": "localhost\\SQLEXPRESS01",
+  "UserName": "UserName",
+  "Password": "Password",
+  "DatabaseName": "master",
+  "TableName": "PCs"
+}
