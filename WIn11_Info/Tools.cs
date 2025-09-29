@@ -588,7 +588,7 @@ namespace WIn11_Info
 
         }
 
-        static void ensureDataBaseExists(string masterConnStr, string dbName)
+        static bool ensureDataBaseExists(string masterConnStr, string dbName)
         {
             string checkDbSql = $@"
             IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'{dbName}')
@@ -606,13 +606,15 @@ namespace WIn11_Info
             catch (Exception ex)
             {
                 MessageBox.Show("Unable to connect to database server");
-                return;
+                return false;
             }
+
+            return true;
 
         }
 
 
-        static void ensureTableExists(string dbConnStr, string tabName)
+        static bool ensureTableExists(string dbConnStr, string tabName)
         {
             string createTableSql = "";
 
@@ -646,8 +648,20 @@ namespace WIn11_Info
 
             using var connection = new SqlConnection(dbConnStr);
             using var command = new SqlCommand(createTableSql, connection);
-            connection.Open();
-            command.ExecuteNonQuery();
+
+            try
+            {
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to connect to database table");
+                return false;
+            }
+
+            return true;
+
         }
 
         static bool isInDatabase(string dbConnStr, string tabName, string sn = "", string NR = "000000", string Id_Numberd = "000000")
@@ -796,8 +810,15 @@ lahf_sahf,SSE3,SSE4_1 ,SSE4_2,EM64T,AES,AVX512,FMA3_4)
             string masterConnectionString = $"Server={server};Database=master;Integrated Security=true;";
             string appConnectionString = $"Server={server};Database={dbName};Integrated Security=true;";
 
-            ensureDataBaseExists(masterConnectionString, dbName);
-            ensureTableExists(appConnectionString, tabName);
+            if (ensureDataBaseExists(masterConnectionString, dbName) == false)
+            {
+                return;
+            }
+            if (ensureTableExists(appConnectionString, tabName) == false)
+            {
+                return;
+            }
+            ;
 
 
             if (isInDatabase(appConnectionString, tabName, SN, NR, ID) == false)
