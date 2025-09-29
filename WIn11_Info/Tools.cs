@@ -598,8 +598,17 @@ namespace WIn11_Info
 
             using var connection = new SqlConnection(masterConnStr);
             using var command = new SqlCommand(checkDbSql, connection);
-            connection.Open();
-            command.ExecuteNonQuery();
+            try
+            {
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to connect to database server");
+                return;
+            }
+
         }
 
 
