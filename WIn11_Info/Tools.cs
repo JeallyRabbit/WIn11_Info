@@ -800,7 +800,8 @@ lahf_sahf,SSE3,SSE4_1 ,SSE4_2,EM64T,AES,AVX512,FMA3_4)
         }
         public static void saveToDatabase(String SN = "", String NR = "", String ID = "")
         {
-            string filePath = "dbSettings.json";
+            string projectRoot = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName;
+            string filePath = Path.Combine(projectRoot, "dbSettings.json");
             string server = "";
             string userName = "";
             string password = "";
